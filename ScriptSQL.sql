@@ -9,11 +9,11 @@ params AS (
 base AS (
   SELECT
     COALESCE(NULLIF(TRIM(setor_sigla), ''), '(NULL)')                AS setor_sigla,
-    COALESCE(NULLIF(TRIM(setor_requisitante_sigla), ''), '(NULL)')  AS setor_requisitante_sigla,
-    COALESCE(NULLIF(TRIM(diretoria), ''), '(NULL)')                 AS diretoria,
-    COALESCE(NULLIF(TRIM(tipo_exame), ''), '(NULL)')                AS tipo_exame,
+    COALESCE(NULLIF(TRIM(setor_descricao), ''), '(SEM DESCRIÇÃO)')   AS setor_descricao,
+    COALESCE(NULLIF(TRIM(setor_requisitante_sigla), ''), '(NULL)')   AS setor_requisitante_sigla,
+    COALESCE(NULLIF(TRIM(diretoria), ''), '(NULL)')                  AS diretoria,
+    COALESCE(NULLIF(TRIM(tipo_exame), ''), '(NULL)')                 AS tipo_exame,
 
-    /* CORRIGIDO: normalização conforme os valores reais do dataset */
     CASE
       WHEN UPPER(TRIM(COALESCE(tem_procedimento,''))) IN (
         'SIM','S','TRUE','1','TEM PROCEDIMENTO'
@@ -83,8 +83,6 @@ kpis AS (
     'laudo_entregue_total', SUM((laudo_status = 'LAUDO ENTREGUE')::int),
     'laudo_entregue_do_periodo', SUM((laudo_status = 'LAUDO ENTREGUE' AND cont_ano = 1)::int),
     'laudo_nao_entregue', SUM((laudo_status = 'NÃO ENTREGUE' AND cont_ano = 1)::int),
-
-    /* CORRIGIDO */
     'tem_procedimento_sim', SUM((tem_procedimento = 'TEM PROCEDIMENTO' AND cont_ano = 1)::int),
     'tem_procedimento_nao', SUM((tem_procedimento = 'NÃO TEM PROCEDIMENTO' AND cont_ano = 1)::int)
   ) AS kpis
@@ -94,7 +92,10 @@ kpis AS (
 por_setor_top10 AS (
   SELECT json_agg(x ORDER BY x.total DESC) AS por_setor_top10
   FROM (
-    SELECT setor_sigla, COUNT(*) AS total
+    SELECT
+      setor_sigla,
+      MAX(setor_descricao) AS setor_descricao,
+      COUNT(*) AS total
     FROM base_filtrada
     WHERE cont_ano = 1
     GROUP BY setor_sigla
@@ -178,6 +179,7 @@ kpis_por_setor AS (
     SELECT
       diretoria,
       setor_sigla,
+      MAX(setor_descricao) AS setor_descricao,
       COUNT(*) AS total,
       SUM((com_requisicao = 'COM REQUISIÇÃO')::int) AS com_requisicao,
       SUM((com_requisicao <> 'COM REQUISIÇÃO' OR com_requisicao IS NULL OR com_requisicao='(NULL)')::int) AS sem_requisicao,
@@ -185,11 +187,8 @@ kpis_por_setor AS (
       SUM((ultima_movimentacao <> 'Perícia Concluída')::int) AS nao_concluidos,
       SUM((laudo_status = 'LAUDO ENTREGUE')::int) AS laudo_entregue,
       SUM((laudo_status = 'NÃO ENTREGUE')::int) AS laudo_nao_entregue,
-
-      /* CORRIGIDO */
       SUM((tem_procedimento = 'TEM PROCEDIMENTO')::int) AS tem_procedimento_sim,
       SUM((tem_procedimento = 'NÃO TEM PROCEDIMENTO')::int) AS tem_procedimento_nao
-
     FROM base_filtrada
     GROUP BY diretoria, setor_sigla
     ORDER BY diretoria, setor_sigla
@@ -201,6 +200,7 @@ por_tipo_exame_setor AS (
   FROM (
     SELECT
       setor_sigla,
+      MAX(setor_descricao) AS setor_descricao,
       tipo_exame,
       COUNT(*) AS total
     FROM base_filtrada
