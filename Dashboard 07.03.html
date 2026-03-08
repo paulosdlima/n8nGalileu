@@ -177,20 +177,23 @@
     .container{max-width:1600px;margin:0 auto}
 
     header{
-      display:flex;
-      justify-content:space-between;
+      display:grid;
+      grid-template-columns:minmax(0,1fr);
       gap:14px;
-      align-items:flex-start;
-      flex-wrap:wrap;
-      padding:14px 14px 10px 14px;
+      padding:14px;
       border:1px solid var(--line);
       background:linear-gradient(180deg, var(--panelHi), var(--panelLo));
       border-radius:calc(var(--radius) + 2px);
       box-shadow:var(--shadow);
       backdrop-filter: blur(10px);
-      position: sticky;
-      top: 12px;
-      z-index: 50;
+      position:sticky;
+      top:12px;
+      z-index:50;
+    }
+
+    .title{
+      min-width:0;
+      width:100%;
     }
 
     .title h1{
@@ -200,6 +203,7 @@
       display:flex;
       gap:10px;
       align-items:center;
+      flex-wrap:wrap;
     }
 
     .title .sub{
@@ -207,18 +211,77 @@
       color:var(--muted);
       font-size:12px;
       display:flex;
+      flex-direction:column;
       gap:8px;
+      align-items:flex-start;
+      line-height:1.2;
+      width:100%;
+      min-width:0;
+    }
+
+    .meta-row{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      align-items:center;
+      width:100%;
+      min-width:0;
+    }
+
+    .meta-row .badge{
+      min-width:0;
+      flex:0 1 auto;
+    }
+
+    .meta-row .pill{
+      flex:0 0 auto;
+    }
+
+    .meta-row-actions{
+      display:flex;
       flex-wrap:wrap;
       align-items:center;
-      line-height:1.2;
+      gap:8px;
+    }
+
+    .meta-row-actions .badge{
+      flex:0 0 auto;
+    }
+
+    .meta-actions{
+      margin-left:auto;
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      flex-wrap:nowrap;
+      flex:0 0 auto;
+    }
+
+    .meta-actions .btn{
+      width:auto !important;
+      min-width:auto;
+      flex:0 0 auto;
+      white-space:nowrap;
     }
 
     .controls{
-      display:flex;
-      gap:10px;
-      flex-wrap:wrap;
-      align-items:center;
-      justify-content:flex-end;
+      display:grid;
+      grid-template-columns:minmax(260px,1.35fr) repeat(4, minmax(120px, 1fr));
+      gap:8px;
+      align-items:stretch;
+      width:100%;
+    }
+
+    .controls > *{
+      min-width:0;
+    }
+
+    .control-row{
+      display:contents;
+    }
+
+    .control-row.filters > *{
+      min-width:0;
     }
 
     .input,.btn,select{
@@ -231,9 +294,23 @@
       outline:none;
       box-shadow: 0 10px 26px rgba(0,0,0,.18);
       transition: border-color .15s ease, transform .15s ease, background .15s ease, box-shadow .15s ease;
+      width:100%;
     }
 
-    .input{width:380px;max-width:100%}
+    .input{
+      width:100%;
+      max-width:none;
+      height:42px;
+      padding:0 12px;
+      font-size:12px;
+      line-height:42px;
+    }
+
+    .input::placeholder{
+      color:var(--muted);
+      opacity:.95;
+    }
+
     .input:focus, select:focus{
       border-color: color-mix(in srgb, var(--accent) 60%, transparent);
       box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 18%, transparent), 0 16px 34px rgba(0,0,0,.28);
@@ -247,13 +324,21 @@
       gap:8px;
       align-items:center;
       justify-content:center;
-      font-weight:650;
+      font-weight:700;
       white-space:nowrap;
+      height:42px;
+      min-height:42px;
+      padding:0 14px;
+      border-radius:12px;
+      font-size:12px;
+      line-height:1;
     }
+
     .btn:hover{transform:translateY(-1px); background: var(--controlBgHover);}
     .btn:active{transform:translateY(0);opacity:.92}
 
     .btn.primary{
+      min-width:96px;
       border-color: color-mix(in srgb, var(--accent) 45%, transparent);
       background:
         radial-gradient(700px 120px at 10% 0%, color-mix(in srgb, var(--accent) 35%, transparent) 0%, transparent 55%),
@@ -261,21 +346,32 @@
     }
 
     .btn.ghost{
+      min-width:74px;
       background: color-mix(in srgb, var(--controlBg) 70%, transparent);
       border-color: color-mix(in srgb, var(--controlBorder) 90%, transparent);
     }
 
     .btn.theme{
-      gap:10px;
-      padding:10px 14px;
+      min-width:138px;
+      gap:8px;
+      padding:0 14px;
       border-color: var(--controlBorder);
       background:
         radial-gradient(700px 120px at 10% 0%, color-mix(in srgb, var(--good) 22%, transparent) 0%, transparent 55%),
         radial-gradient(700px 120px at 90% 0%, color-mix(in srgb, var(--accent) 22%, transparent) 0%, transparent 55%),
         color-mix(in srgb, var(--controlBg) 85%, transparent);
     }
-    .btn.theme .icon{font-size:16px;line-height:1}
-    .btn.theme .label{font-weight:750}
+
+    .btn.theme .icon{
+      font-size:14px;
+      line-height:1;
+    }
+
+    .btn.theme .label{
+      font-weight:800;
+      font-size:12px;
+      line-height:1;
+    }
 
     .pill{
       display:inline-flex;gap:8px;align-items:center;
@@ -295,10 +391,14 @@
       color:var(--muted);
       font-size:12px;
       background:color-mix(in srgb, var(--text) 3%, transparent);
-      max-width:520px;
+      max-width:100%;
       overflow:hidden;
       text-overflow:ellipsis;
       white-space:nowrap;
+    }
+
+    #apiBadge{
+      max-width:min(100%, 720px);
     }
 
     .badge.ok{color:var(--good);border-color:color-mix(in srgb, var(--good) 30%, transparent);background:color-mix(in srgb, var(--good) 10%, transparent)}
@@ -354,6 +454,7 @@
       opacity:.55;
       pointer-events:none;
     }
+
     html[data-theme="light"] .card:before{opacity:.28}
 
     .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:space-between}
@@ -371,6 +472,7 @@
       box-shadow: 0 12px 30px rgba(0,0,0,.20);
       min-height:92px;
     }
+
     html[data-theme="light"] .kpi{ box-shadow: 0 12px 30px rgba(10,18,34,.12); }
     .kpi .label{color:var(--muted);font-size:12px}
     .kpi .value{margin-top:6px;font-size:22px;font-weight:800;letter-spacing:.2px;text-shadow: 0 10px 26px rgba(0,0,0,.35)}
@@ -390,6 +492,7 @@
         color-mix(in srgb, var(--text) 3%, transparent);
       box-shadow: 0 10px 26px rgba(0,0,0,.18);
     }
+
     html[data-theme="light"] .chart-wrap{
       box-shadow: 0 10px 26px rgba(10,18,34,.10);
     }
@@ -399,6 +502,7 @@
       border:1px solid rgba(255,0,80,.22);
       padding:10px 12px;border-radius:14px;margin-top:14px;display:none;white-space:pre-wrap;
     }
+
     html[data-theme="light"] .err{
       color:#9f1239;background:rgba(225,29,72,.08);
       border:1px solid rgba(225,29,72,.20);
@@ -445,14 +549,211 @@
       max-width:48%;
     }
 
+    .custom-select{
+      position:relative;
+      min-width:0;
+      width:100%;
+    }
+
+    .custom-select-btn{
+      width:100%;
+      min-width:0;
+      min-height:42px;
+      border:1px solid var(--controlBorder);
+      background: var(--controlBg);
+      color:var(--text);
+      border-radius:12px;
+      padding:6px 28px 6px 10px;
+      font-size:13px;
+      outline:none;
+      box-shadow: 0 10px 26px rgba(0,0,0,.18);
+      transition: border-color .15s ease, transform .15s ease, background .15s ease, box-shadow .15s ease;
+      display:flex;
+      flex-direction:column;
+      align-items:flex-start;
+      justify-content:center;
+      gap:1px;
+      cursor:pointer;
+      text-align:left;
+      position:relative;
+    }
+
+    .custom-select-btn::after{
+      content:"▼";
+      position:absolute;
+      right:10px;
+      top:50%;
+      transform:translateY(-50%);
+      font-size:10px;
+      color:var(--muted);
+      pointer-events:none;
+    }
+
+    .custom-select-btn:hover{
+      transform:translateY(-1px);
+      background: var(--controlBgHover);
+    }
+
+    .custom-select-btn:focus{
+      border-color: color-mix(in srgb, var(--accent) 60%, transparent);
+      box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 18%, transparent), 0 16px 34px rgba(0,0,0,.28);
+      background: var(--controlBgFocus);
+    }
+
+    .custom-select-btn[disabled]{
+      opacity:.65;
+      cursor:not-allowed;
+    }
+
+    .custom-select-btn .sigla{
+      font-size:12px;
+      font-weight:800;
+      color:var(--text);
+      line-height:1.05;
+      padding-right:18px;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      max-width:100%;
+    }
+
+    .custom-select-btn .desc{
+      font-size:10px;
+      color:var(--muted);
+      line-height:1.05;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      max-width:100%;
+      padding-right:18px;
+      margin-top:1px;
+    }
+
+    .custom-select-menu{
+      position:absolute;
+      top:calc(100% + 8px);
+      left:0;
+      width:100%;
+      min-width:220px;
+      max-width:420px;
+      max-height:360px;
+      overflow:auto;
+      border:1px solid var(--controlBorder);
+      background: var(--controlBgFocus);
+      border-radius:14px;
+      box-shadow:0 18px 50px rgba(0,0,0,.35);
+      backdrop-filter: blur(10px);
+      z-index:1000;
+      padding:8px;
+      display:none;
+    }
+
+    .custom-select.open .custom-select-menu{
+      display:block;
+    }
+
+    .custom-option{
+      width:100%;
+      border:1px solid transparent;
+      background:transparent;
+      color:var(--text);
+      border-radius:12px;
+      padding:10px 12px;
+      display:flex;
+      flex-direction:column;
+      align-items:flex-start;
+      gap:3px;
+      cursor:pointer;
+      text-align:left;
+    }
+
+    .custom-option:hover{
+      background:color-mix(in srgb, var(--accent) 12%, transparent);
+      border-color:color-mix(in srgb, var(--accent) 20%, transparent);
+    }
+
+    .custom-option.active{
+      background:color-mix(in srgb, var(--accent) 18%, transparent);
+      border-color:color-mix(in srgb, var(--accent) 35%, transparent);
+    }
+
+    .custom-option .sigla{
+      font-size:13px;
+      font-weight:800;
+      line-height:1.1;
+    }
+
+    .custom-option .desc{
+      font-size:11px;
+      color:var(--muted);
+      line-height:1.2;
+    }
+
+    #dirPicker,
+    #setorPicker,
+    #anoPicker,
+    #refreshPicker{
+      min-width:0;
+    }
+
+    #dirPicker .custom-select-btn,
+    #setorPicker .custom-select-btn,
+    #anoPicker .custom-select-btn,
+    #refreshPicker .custom-select-btn{
+      width:100%;
+    }
+
+    #dirPicker .custom-select-menu,
+    #setorPicker .custom-select-menu,
+    #anoPicker .custom-select-menu,
+    #refreshPicker .custom-select-menu{
+      width:100%;
+    }
+
+    #apiUrl{width:100%}
+    #themeToggle{
+      min-width:138px;
+      width:auto !important;
+    }
+    #btnLoad{
+      min-width:96px;
+      width:auto !important;
+    }
+    #btnReset{
+      min-width:74px;
+      width:auto !important;
+    }
+
     @media (max-width:1400px){
       .kpis{grid-template-columns:repeat(4,1fr)}
+
+      .controls{
+        grid-template-columns:minmax(220px,1.2fr) repeat(4, minmax(110px, 1fr));
+      }
     }
+
     @media (max-width:1200px){
       .kpis{grid-template-columns:repeat(3,1fr)}
-      .input{width:320px}
+      #apiBadge{max-width:100%}
       .card-tall canvas{height:460px !important;}
+
+      .controls{
+        grid-template-columns:repeat(2, minmax(0,1fr));
+      }
+
+      .meta-row-actions{
+        align-items:center;
+      }
+
+      .meta-actions{
+        margin-left:0;
+        width:auto;
+        flex-direction:row;
+        align-items:center;
+        flex-wrap:wrap;
+      }
     }
+
     @media (max-width:1050px){
       .kpis{grid-template-columns:repeat(2,1fr)}
       .span-4{grid-column:span 12}
@@ -462,11 +763,38 @@
       .wrap{padding:14px}
       header{padding:12px}
       .card-tall canvas{height:420px !important;}
+
+      .controls{
+        grid-template-columns:repeat(2, minmax(0,1fr));
+      }
     }
+
+    @media (max-width:760px){
+      .controls{
+        grid-template-columns:1fr;
+      }
+
+      .meta-row-actions{
+        align-items:center;
+      }
+
+      .meta-actions{
+        margin-left:0;
+        width:auto;
+        flex-direction:row;
+        align-items:center;
+        flex-wrap:wrap;
+      }
+
+      .meta-actions .btn{
+        width:auto !important;
+      }
+    }
+
     @media (max-width:560px){
       .title h1{font-size:18px}
-      .input{width:100%}
-      .badge{max-width:320px}
+      .badge{max-width:100%}
+      #apiBadge{max-width:100%}
       .card-tall canvas{height:380px !important;}
       .kpis{grid-template-columns:1fr}
 
@@ -474,7 +802,19 @@
         flex-direction:column;
         align-items:flex-start;
       }
-      .page-footer .inner > div{max-width:100%;}
+
+      .page-footer .inner > div{
+        max-width:100%;
+      }
+
+      .custom-select,
+      .custom-select-btn,
+      .custom-select-menu,
+      #apiUrl{
+        width:100%;
+        min-width:100%;
+        max-width:100%;
+      }
     }
   </style>
 </head>
@@ -485,47 +825,83 @@
       <header>
         <div class="title">
           <h1>📊 Sistema Estatístico Pericial - Sistema Galileu</h1>
+
           <div class="sub">
-            <span class="pill"><span class="dot" id="dot"></span> <span id="statusText">aguardando</span></span>
-            <span class="badge" id="apiBadge">/data</span>
-            <span class="badge">Atualizado: <span id="updatedAt">—</span></span>
-            <span class="badge">Carregamento: <span id="latency">—</span></span>
-            <span class="badge">Diretoria: <span id="dirBadge">Todas</span></span>
-            <span class="badge">Setor: <span id="setorBadge">Todos</span></span>
-            <span class="badge">Ano: <span id="anoBadge">Todos</span></span>
-            <span class="badge">Setor Req.: <span id="setorReqBadge">—</span></span>
+            <div class="meta-row">
+              <span class="pill"><span class="dot" id="dot"></span> <span id="statusText">aguardando</span></span>
+              <span class="badge" id="apiBadge">/data</span>
+              <span class="badge">Atualizado: <span id="updatedAt">—</span></span>
+              <span class="badge">Diretoria: <span id="dirBadge">Todas</span></span>
+              <span class="badge">Setor: <span id="setorBadge">Todos</span></span>
+              <span class="badge">Ano: <span id="anoBadge">Todos</span></span>
+                <button type="button" class="btn ghost theme" id="themeToggle" title="Alternar tema (Claro / Escuro / SSP)">
+                  <span class="icon" id="themeIcon">🌙</span>
+                  <span class="label" id="themeLabel">Tema escuro</span>
+                </button>
+                <button class="btn primary" id="btnLoad">Atualizar</button>
+                <button class="btn ghost" id="btnReset" title="Limpa filtros e recarrega">Reset</button>
+            </div>
+
+            <div class="meta-row meta-row-actions">
+              
+              <div class="meta-actions">
+                
+              </div>
+            </div>
           </div>
         </div>
 
         <div class="controls">
-          <input class="input" id="apiUrl" placeholder="URL do webhook UI (sem /data)" />
+          <div class="control-row filters">
+            <input class="input" id="apiUrl" placeholder="URL do webhook UI (sem /data)" />
 
-          <select id="dirSelect" title="Filtrar diretoria">
-            <option value="__ALL__" selected>Todas as diretorias</option>
-          </select>
+            <div class="custom-select" id="dirPicker">
+              <button type="button" class="custom-select-btn" id="dirDisplay" title="Filtrar diretoria">
+                <span class="sigla" id="dirDisplaySigla">Todas as diretorias</span>
+                <span class="desc" id="dirDisplayDesc">Filtro de diretoria</span>
+              </button>
+              <div class="custom-select-menu" id="dirMenu"></div>
+              <select id="dirSelect" title="Filtrar diretoria" hidden>
+                <option value="__ALL__" selected>Todas as diretorias</option>
+              </select>
+            </div>
 
-          <select id="setorSelect" title="Filtrar setor (setor_sigla)" disabled>
-            <option value="__ALL__" selected>Selecione o setor</option>
-          </select>
+            <div class="custom-select" id="setorPicker">
+              <button type="button" class="custom-select-btn" id="setorDisplay" disabled title="Filtrar setor">
+                <span class="sigla" id="setorDisplaySigla">Todos os setores</span>
+                <span class="desc" id="setorDisplayDesc">Escolha uma diretoria primeiro</span>
+              </button>
+              <div class="custom-select-menu" id="setorMenu"></div>
+              <select id="setorSelect" title="Filtrar setor (setor_sigla)" hidden>
+                <option value="__ALL__" selected>Selecione o setor</option>
+              </select>
+            </div>
 
-          <select id="anoSelect" title="Filtrar ano">
-            <option value="__ALL__" selected>Todos os anos</option>
-          </select>
+            <div class="custom-select" id="anoPicker">
+              <button type="button" class="custom-select-btn" id="anoDisplay" title="Filtrar ano">
+                <span class="sigla" id="anoDisplaySigla">Todos os anos</span>
+                <span class="desc" id="anoDisplayDesc">Período completo</span>
+              </button>
+              <div class="custom-select-menu" id="anoMenu"></div>
+              <select id="anoSelect" title="Filtrar ano" hidden>
+                <option value="__ALL__" selected>Todos os anos</option>
+              </select>
+            </div>
 
-          <select id="refresh" title="Auto-refresh">
-            <option value="0">Sem auto-refresh</option>
-            <option value="10">Auto: 10s</option>
-            <option value="30" selected>Auto: 30s</option>
-            <option value="60">Auto: 60s</option>
-          </select>
-
-          <button type="button" class="btn ghost theme" id="themeToggle" title="Alternar tema (Claro / Escuro / SSP)">
-            <span class="icon" id="themeIcon">🌙</span>
-            <span class="label" id="themeLabel">Tema escuro</span>
-          </button>
-
-          <button class="btn primary" id="btnLoad">Atualizar</button>
-          <button class="btn ghost" id="btnReset" title="Limpa filtros e recarrega">Reset</button>
+            <div class="custom-select" id="refreshPicker">
+              <button type="button" class="custom-select-btn" id="refreshDisplay" title="Auto-refresh">
+                <span class="sigla" id="refreshDisplaySigla">Auto: 30s</span>
+                <span class="desc" id="refreshDisplayDesc">Atualização automática</span>
+              </button>
+              <div class="custom-select-menu" id="refreshMenu"></div>
+              <select id="refresh" title="Auto-refresh" hidden>
+                <option value="0">Sem auto-refresh</option>
+                <option value="10">Auto: 10s</option>
+                <option value="30" selected>Auto: 30s</option>
+                <option value="60">Auto: 60s</option>
+              </select>
+            </div>
+          </div>
         </div>
       </header>
 
@@ -547,15 +923,15 @@
             <div class="kpi">
               <div class="label">Com requisição</div>
               <div class="value" id="k_com">—</div>
-              <div class="hint" style="display: inline-block;">
-                <div style="display: inline-block;" id="k_sem">—</div> Sem Requisição
+              <div class="hint" style="display:inline-block;">
+                <div style="display:inline-block;" id="k_sem">—</div> Sem Requisição
               </div>
             </div>
             <div class="kpi">
               <div class="label">Com procedimento</div>
               <div class="value" id="k_proc_sim">—</div>
-              <div class="hint" style="display: inline-block;">
-                <div style="display: inline-block;" id="k_proc_nao">—</div> Sem procedimento
+              <div class="hint" style="display:inline-block;">
+                <div style="display:inline-block;" id="k_proc_nao">—</div> Sem procedimento
               </div>
             </div>
             <div class="kpi">
@@ -576,11 +952,10 @@
             <div class="kpi">
               <div class="label">Laudos Entregues</div>
               <div class="value" id="k_ent_total">—</div>
-              <div class="hint" style="display: inline-block;">
-                <div style="display: inline-block;" id="k_ent_periodo">—</div> Entregues no período
+              <div class="hint" style="display:inline-block;">
+                <div style="display:inline-block;" id="k_ent_periodo">—</div> Entregues no período
               </div>
             </div>
-            
           </div>
         </div>
 
@@ -660,7 +1035,7 @@
       <footer class="page-footer">
         <div class="inner">
           <div>Sistema Galileu @ 2026</div>
-          <div id="buildInfo">Desenvolvimento: Paulo Lima & Roniselton Barreto - v11 - 2026</div>
+          <div id="buildInfo">Sistema desenvolvido por Paulo Lima e Roniselton Barreto • Versão 11 • 2026</div>
         </div>
       </footer>
     </div>
@@ -683,8 +1058,8 @@
   let chartFluxoMes = null;
 
   let topN = 15;
-
   let pendingLoad = null;
+
   function scheduleLoad(delayMs = 120){
     if (pendingLoad) clearTimeout(pendingLoad);
     pendingLoad = setTimeout(() => loadDashboard(), delayMs);
@@ -883,7 +1258,6 @@
 
     if (dir) params.set("diretoria", dir);
     if (setor) params.set("setor", setor);
-
     if (!opts.omitAno && ano) params.set("ano", String(ano));
 
     const qs = params.toString();
@@ -967,13 +1341,10 @@
     return {
       tick: CH.tick,
       grid: CH.grid,
-
       inFill: withAlphaHslOrHex(cssVar("--accent","#4b7bff"), 0.55),
       inLine: withAlphaHslOrHex(cssVar("--accent","#4b7bff"), 1),
-
       outFill: withAlphaHslOrHex(cssVar("--good","#00C853"), 0.65),
       outLine: withAlphaHslOrHex(cssVar("--good","#00C853"), 1),
-
       backFill: INST.area0,
       backFillSoft: INST.area1,
       backLine: INST.line
@@ -992,7 +1363,6 @@
       const g = groupTotaisByYearFromPorMes(porMesRows);
       labels = g.labels;
       values = g.values;
-
       $("evolTitle").textContent = "Evolução anual";
       $("evolPill").textContent = "📈 linha + barras (anual)";
     } else {
@@ -1003,7 +1373,6 @@
       }
       labels = [...byMes.keys()].sort();
       values = labels.map(m => byMes.get(m));
-
       $("evolTitle").textContent = "Evolução mensal";
       $("evolPill").textContent = "📈 linha + barras (mensal)";
     }
@@ -1164,7 +1533,6 @@
     if (chartFluxoMes) chartFluxoMes.destroy();
 
     const ctx = $("chFluxoMes").getContext("2d");
-
     const gradBacklog = ctx.createLinearGradient(0, 0, 0, 320);
     gradBacklog.addColorStop(0, C.backFill);
     gradBacklog.addColorStop(1, C.backFillSoft);
@@ -1450,62 +1818,70 @@
   }
 
   function renderSetorRequisitanteChart(rows){
-    const CH = getThemeCharts();
+  const CH = getThemeCharts();
 
-    const rws = safeArray(rows)
-      .map(r => ({
-        setor_requisitante_sigla: String(r.setor_requisitante_sigla ?? "(NULL)").trim() || "(NULL)",
-        total: Number(r.total || 0)
-      }))
-      .sort((a,b)=>b.total-a.total);
+  const setorSelecionado = currentSetor();
 
-    $("setorReqBadge").textContent =
-      rws[0]?.setor_requisitante_sigla ? `${rws[0].setor_requisitante_sigla} (${fmt(rws[0].total)})` : "—";
+  const rws = safeArray(rows)
+    .map(r => ({
+      setor_requisitante_sigla: String(r.setor_requisitante_sigla ?? "(NULL)").trim() || "(NULL)",
+      total: Number(r.total || 0)
+    }))
+    .sort((a,b)=>b.total-a.total);
 
-    const top = rws.slice(0, 15);
-    const labels = top.map(x => x.setor_requisitante_sigla);
-    const values = top.map(x => x.total);
-    const base = labels.map(l => hashColor(l));
-    const fill = base.map(c => withAlphaHslOrHex(c, 0.80));
-    const line = base.map(c => withAlphaHslOrHex(c, 1));
+  const top = rws.slice(0, 15);
+  const labels = top.map(x => x.setor_requisitante_sigla);
+  const values = top.map(x => x.total);
+  const base = labels.map(l => hashColor(l));
+  const fill = base.map(c => withAlphaHslOrHex(c, 0.80));
+  const line = base.map(c => withAlphaHslOrHex(c, 1));
 
-    if (chartSetorReq) chartSetorReq.destroy();
-    chartSetorReq = new Chart($("chSetorReq"), {
-      type: "bar",
-      data: {
-        labels,
-        datasets: [{
-          label:"Total",
-          data: values,
-          backgroundColor: fill,
-          borderColor: line,
-          borderWidth: 1.6,
-          borderRadius: 12,
-          barThickness: 24,
-          maxBarThickness: 30
-        }]
-      },
-      options: {
-        responsive:true,
-        maintainAspectRatio:false,
-        plugins:{ legend:{ display:false }, tooltip:{ enabled:true } },
-        scales:{
-          x:{ ticks:{ color: CH.tick }, grid:{ display:false } },
-          y:{ beginAtZero:true, ticks:{ color: CH.tick, callback:(v)=>fmt(v) }, grid:{ color: CH.grid } }
-        }
+  if (chartSetorReq) chartSetorReq.destroy();
+  chartSetorReq = new Chart($("chSetorReq"), {
+    type: "bar",
+    data: {
+      labels,
+      datasets: [{
+        label:"Total",
+        data: values,
+        backgroundColor: fill,
+        borderColor: line,
+        borderWidth: 1.6,
+        borderRadius: 12,
+        barThickness: 24,
+        maxBarThickness: 30
+      }]
+    },
+    options: {
+      responsive:true,
+      maintainAspectRatio:false,
+      plugins:{ legend:{ display:false }, tooltip:{ enabled:true } },
+      scales:{
+        x:{ ticks:{ color: CH.tick }, grid:{ display:false } },
+        y:{ beginAtZero:true, ticks:{ color: CH.tick, callback:(v)=>fmt(v) }, grid:{ color: CH.grid } }
       }
-    });
-  }
+    }
+  });
+}
 
   function setTipoExameCardVisible(isVisible){
-    const card = $("cardTipoExameSetor");
-    card.style.display = isVisible ? "" : "none";
+    $("cardTipoExameSetor").style.display = isVisible ? "" : "none";
+  }
+
+  function getSetorLabel(){
+    const sel = $("setorSelect");
+    if (sel.value === "__ALL__") return "Todos";
+
+    const opt = [...sel.options].find(o => o.value === sel.value);
+    const desc = opt?.dataset?.desc || "";
+
+    return desc ? `${sel.value} - ${desc}` : sel.value;
   }
 
   function renderTipoExamePorSetor(rows){
     const CH = getThemeCharts();
-
     const setorSel = currentSetor();
+
     if (!setorSel){
       setTipoExameCardVisible(false);
       if (chartTipoExame) { chartTipoExame.destroy(); chartTipoExame = null; }
@@ -1523,7 +1899,7 @@
     .sort((a,b)=>b.total-a.total);
 
     const totalAll = rws.reduce((a,b)=>a + (b.total||0), 0);
-    $("tipoExameHint").innerHTML = `Setor: <b>${setorSel}</b> · Total (todos): <b>${fmt(totalAll)}</b>`;
+    $("tipoExameHint").innerHTML = `Setor: <b>${getSetorLabel()}</b> · Total (todos): <b>${fmt(totalAll)}</b>`;
 
     if (!rws.length){
       if (chartTipoExame) { chartTipoExame.destroy(); chartTipoExame = null; }
@@ -1575,55 +1951,226 @@
     });
   }
 
+  function updateCustomDiretoriaDisplay(){
+    const sel = $("dirSelect");
+    const siglaEl = $("dirDisplaySigla");
+    const descEl = $("dirDisplayDesc");
+    const value = String(sel.value || "__ALL__").trim();
+
+    if (value === "__ALL__"){
+      siglaEl.textContent = "Todas as diretorias";
+      descEl.textContent = "Filtro de diretoria";
+      return;
+    }
+
+    siglaEl.textContent = value;
+    descEl.textContent = "Diretoria selecionada";
+  }
+
+  function updateCustomSetorDisplay(){
+    const sel = $("setorSelect");
+    const siglaEl = $("setorDisplaySigla");
+    const descEl = $("setorDisplayDesc");
+    const value = String(sel.value || "__ALL__").trim();
+
+    if (value === "__ALL__"){
+      siglaEl.textContent = "Todos os setores";
+      descEl.textContent = currentDiretoria() ? "Escolha um setor" : "Escolha uma diretoria primeiro";
+      return;
+    }
+
+    const opt = [...sel.options].find(o => o.value === value);
+    const desc = opt?.dataset?.desc || "";
+
+    siglaEl.textContent = value;
+    descEl.textContent = desc || "Sem descrição";
+  }
+
+  function updateCustomAnoDisplay(){
+    const sel = $("anoSelect");
+    const siglaEl = $("anoDisplaySigla");
+    const descEl = $("anoDisplayDesc");
+    const value = String(sel.value || "__ALL__").trim();
+
+    if (value === "__ALL__"){
+      siglaEl.textContent = "Todos os anos";
+      descEl.textContent = "Período completo";
+      return;
+    }
+
+    siglaEl.textContent = value;
+    descEl.textContent = "Ano selecionado";
+  }
+
+  function updateCustomRefreshDisplay(){
+    const sel = $("refresh");
+    const siglaEl = $("refreshDisplaySigla");
+    const descEl = $("refreshDisplayDesc");
+    const value = String(sel.value || "30").trim();
+
+    if (value === "0"){
+      siglaEl.textContent = "Auto: off";
+      descEl.textContent = "Atualização manual";
+      return;
+    }
+
+    siglaEl.textContent = `Auto: ${value}s`;
+    descEl.textContent = "Atualização automática";
+  }
+
+  function closeDirMenu(){ $("dirPicker").classList.remove("open"); }
+  function closeSetorMenu(){ $("setorPicker").classList.remove("open"); }
+  function closeAnoMenu(){ $("anoPicker").classList.remove("open"); }
+  function closeRefreshMenu(){ $("refreshPicker").classList.remove("open"); }
+
+  function toggleDirMenu(){ $("dirPicker").classList.toggle("open"); }
+  function toggleSetorMenu(){ if (!$("setorDisplay").disabled) $("setorPicker").classList.toggle("open"); }
+  function toggleAnoMenu(){ $("anoPicker").classList.toggle("open"); }
+  function toggleRefreshMenu(){ $("refreshPicker").classList.toggle("open"); }
+
+  document.addEventListener("click", (e) => {
+    const dirPicker = $("dirPicker");
+    const setorPicker = $("setorPicker");
+    const anoPicker = $("anoPicker");
+    const refreshPicker = $("refreshPicker");
+
+    if (!dirPicker.contains(e.target)) closeDirMenu();
+    if (!setorPicker.contains(e.target)) closeSetorMenu();
+    if (!anoPicker.contains(e.target)) closeAnoMenu();
+    if (!refreshPicker.contains(e.target)) closeRefreshMenu();
+  });
+
   function buildDiretoriaOptions(data){
     const rows = safeArray(data.por_diretoria);
     const dirs = uniq(rows.map(x => String(x.diretoria ?? "").trim()).filter(Boolean))
       .sort((a,b)=>a.localeCompare(b,"pt-BR",{sensitivity:"base"}));
 
     const sel = $("dirSelect");
-    const cur = sel.value || "__ALL__";
+    const menu = $("dirMenu");
+    const cur = String(sel.value || "__ALL__").trim();
 
     sel.innerHTML =
       `<option value="__ALL__">Todas as diretorias</option>` +
       dirs.map(d => `<option value="${d}">${d}</option>`).join("");
 
     sel.value = dirs.includes(cur) ? cur : "__ALL__";
+
+    menu.innerHTML =
+      `<button type="button" class="custom-option ${sel.value === "__ALL__" ? "active" : ""}" data-value="__ALL__">
+        <span class="sigla">Todas as diretorias</span>
+        <span class="desc">Sem filtro de diretoria</span>
+      </button>` +
+      dirs.map(d => `
+        <button type="button" class="custom-option ${sel.value === d ? "active" : ""}" data-value="${d}">
+          <span class="sigla">${d}</span>
+          <span class="desc">Diretoria selecionável</span>
+        </button>
+      `).join("");
+
+    [...menu.querySelectorAll(".custom-option")].forEach(btnOpt => {
+      btnOpt.addEventListener("click", () => {
+        sel.value = btnOpt.dataset.value;
+        [...menu.querySelectorAll(".custom-option")].forEach(x => x.classList.remove("active"));
+        btnOpt.classList.add("active");
+
+        updateCustomDiretoriaDisplay();
+        closeDirMenu();
+
+        $("setorSelect").value = "__ALL__";
+        buildSetorOptions(lastData || {});
+        scheduleLoad();
+        renderTipoExamePorSetor(safeArray(lastData?.por_tipo_exame_setor));
+      });
+    });
+
+    updateCustomDiretoriaDisplay();
   }
 
   function buildSetorOptions(data){
     const dir = currentDiretoria();
     const sel = $("setorSelect");
+    const menu = $("setorMenu");
+    const btn = $("setorDisplay");
     const prev = String(sel.value || "__ALL__").trim();
 
     if (!dir){
       sel.disabled = true;
-      sel.innerHTML = `<option value="__ALL__">Selecione o setor</option>`;
-      sel.value = "__ALL__";
+      btn.disabled = true;
+      sel.innerHTML = `<option value="__ALL__" data-desc="">Selecione o setor</option>`;
+      menu.innerHTML = "";
+      updateCustomSetorDisplay();
+      closeSetorMenu();
       return;
     }
 
-    const rows = safeArray(data.kpis_por_setor).filter(r => norm(r.diretoria) === norm(dir));
+    const rows = safeArray(data.kpis_por_setor)
+      .filter(r => norm(r.diretoria) === norm(dir));
 
-    const setores = uniq(rows.map(r => String(r.setor_sigla ?? "").trim()).filter(Boolean))
-      .sort((a,b)=>a.localeCompare(b, "pt-BR", { sensitivity:"base" }));
+    const mapa = new Map();
+
+    for (const r of rows){
+      const sigla = String(r.setor_sigla ?? "").trim();
+      const descricao = String(r.setor_descricao ?? "").trim();
+      if (!sigla) continue;
+      if (!mapa.has(sigla)){
+        mapa.set(sigla, { sigla, descricao });
+      }
+    }
+
+    const setores = [...mapa.values()]
+      .sort((a,b) => a.sigla.localeCompare(b.sigla, "pt-BR", { sensitivity:"base" }));
 
     sel.disabled = false;
-    sel.innerHTML =
-      `<option value="__ALL__">Todos os setores</option>` +
-      setores.map(s => `<option value="${s}">${s}</option>`).join("");
+    btn.disabled = false;
 
-    if (prev !== "__ALL__" && setores.includes(prev)) sel.value = prev;
-    else sel.value = "__ALL__";
+    sel.innerHTML =
+      `<option value="__ALL__" data-desc="">Todos os setores</option>` +
+      setores.map(s => `<option value="${s.sigla}" data-desc="${(s.descricao || "").replace(/"/g, "&quot;")}">${s.sigla}</option>`).join("");
+
+    if (prev !== "__ALL__" && setores.some(s => s.sigla === prev)) {
+      sel.value = prev;
+    } else {
+      sel.value = "__ALL__";
+    }
+
+    menu.innerHTML =
+      `<button type="button" class="custom-option ${sel.value === "__ALL__" ? "active" : ""}" data-value="__ALL__">
+        <span class="sigla">Todos os setores</span>
+        <span class="desc">Sem filtro de setor</span>
+      </button>` +
+      setores.map(s => `
+        <button type="button" class="custom-option ${sel.value === s.sigla ? "active" : ""}" data-value="${s.sigla}">
+          <span class="sigla">${s.sigla}</span>
+          <span class="desc">${s.descricao || "Sem descrição"}</span>
+        </button>
+      `).join("");
+
+    [...menu.querySelectorAll(".custom-option")].forEach(btnOpt => {
+      btnOpt.addEventListener("click", () => {
+        sel.value = btnOpt.dataset.value;
+        [...menu.querySelectorAll(".custom-option")].forEach(x => x.classList.remove("active"));
+        btnOpt.classList.add("active");
+        updateCustomSetorDisplay();
+        closeSetorMenu();
+
+        scheduleLoad();
+        renderTipoExamePorSetor(safeArray(lastData?.por_tipo_exame_setor));
+      });
+    });
+
+    updateCustomSetorDisplay();
   }
 
   function buildAnoOptionsFromMes(data){
     const sel = $("anoSelect");
+    const menu = $("anoMenu");
     const prev = String(sel.value || "__ALL__").trim();
 
     const mesRows = safeArray(data.por_mes);
-    const anos = uniq(mesRows
-      .map(r => Number(String(r.mes || "").slice(0,4)))
-      .filter(y => y >= 1900)
+    const anos = uniq(
+      mesRows
+        .map(r => Number(String(r.mes || "").slice(0,4)))
+        .filter(y => y >= 1900)
     ).sort((a,b)=>b-a);
 
     sel.disabled = false;
@@ -1632,17 +2179,84 @@
       anos.map(y => `<option value="${y}">${y}</option>`).join("");
 
     const prevNum = Number(prev);
-    if (prev !== "__ALL__" && Number.isFinite(prevNum) && anos.includes(prevNum)) sel.value = String(prevNum);
-    else sel.value = "__ALL__";
+    if (prev !== "__ALL__" && Number.isFinite(prevNum) && anos.includes(prevNum)) {
+      sel.value = String(prevNum);
+    } else {
+      sel.value = "__ALL__";
+    }
+
+    menu.innerHTML =
+      `<button type="button" class="custom-option ${sel.value === "__ALL__" ? "active" : ""}" data-value="__ALL__">
+        <span class="sigla">Todos os anos</span>
+        <span class="desc">Sem filtro de período</span>
+      </button>` +
+      anos.map(y => `
+        <button type="button" class="custom-option ${sel.value === String(y) ? "active" : ""}" data-value="${y}">
+          <span class="sigla">${y}</span>
+          <span class="desc">Ano selecionável</span>
+        </button>
+      `).join("");
+
+    [...menu.querySelectorAll(".custom-option")].forEach(btnOpt => {
+      btnOpt.addEventListener("click", () => {
+        sel.value = btnOpt.dataset.value;
+        [...menu.querySelectorAll(".custom-option")].forEach(x => x.classList.remove("active"));
+        btnOpt.classList.add("active");
+
+        updateCustomAnoDisplay();
+        closeAnoMenu();
+        scheduleLoad();
+      });
+    });
+
+    updateCustomAnoDisplay();
+  }
+
+  function buildRefreshOptions(){
+    const sel = $("refresh");
+    const menu = $("refreshMenu");
+    const cur = String(sel.value || "30").trim();
+
+    menu.innerHTML = `
+      <button type="button" class="custom-option ${cur === "0" ? "active" : ""}" data-value="0">
+        <span class="sigla">Auto: off</span>
+        <span class="desc">Atualização manual</span>
+      </button>
+      <button type="button" class="custom-option ${cur === "10" ? "active" : ""}" data-value="10">
+        <span class="sigla">Auto: 10s</span>
+        <span class="desc">Atualização automática</span>
+      </button>
+      <button type="button" class="custom-option ${cur === "30" ? "active" : ""}" data-value="30">
+        <span class="sigla">Auto: 30s</span>
+        <span class="desc">Atualização automática</span>
+      </button>
+      <button type="button" class="custom-option ${cur === "60" ? "active" : ""}" data-value="60">
+        <span class="sigla">Auto: 60s</span>
+        <span class="desc">Atualização automática</span>
+      </button>
+    `;
+
+    [...menu.querySelectorAll(".custom-option")].forEach(btnOpt => {
+      btnOpt.addEventListener("click", () => {
+        sel.value = btnOpt.dataset.value;
+        [...menu.querySelectorAll(".custom-option")].forEach(x => x.classList.remove("active"));
+        btnOpt.classList.add("active");
+
+        updateCustomRefreshDisplay();
+        closeRefreshMenu();
+        setAutoRefresh();
+      });
+    });
+
+    updateCustomRefreshDisplay();
   }
 
   function renderFromServer(data, dataNoAno = null){
     const dir = currentDiretoria();
-    const setor = currentSetor();
     const ano = currentAno();
 
     $("dirBadge").textContent = dir || "Todas";
-    $("setorBadge").textContent = setor || "Todos";
+    $("setorBadge").textContent = currentSetor() || "Todos";
     $("anoBadge").textContent = ano ? String(ano) : "Todos";
 
     const k = data.kpis || {};
@@ -1658,14 +2272,12 @@
     $("k_proc_nao").textContent = fmt(k.tem_procedimento_nao || 0);
 
     renderEvolucao(safeArray(data.por_mes));
-
     renderDiretoriaFromRows(safeArray(data.por_diretoria));
     renderGaugeFromRows(safeArray(data.por_com_requisicao));
     renderLaudoFromRows(safeArray(data.por_laudo_entregue).map(r => ({ laudo_status: r.status, total: r.total })));
 
     const topSetores = groupTopSetoresFromPayload(data);
     renderTopSetoresChart(topSetores);
-
     renderSetorRequisitanteChart(safeArray(data.por_setor_requisitante));
     renderTipoExamePorSetor(safeArray(data.por_tipo_exame_setor));
 
@@ -1704,7 +2316,6 @@
         throw new Error("JSON válido, mas não é um objeto esperado (confira a saída do workflow).");
       }
 
-      $("latency").textContent = `${Math.round(performance.now() - t0)} ms`;
       lastData = data0;
 
       $("apiBadge").textContent = endpoint;
@@ -1749,18 +2360,22 @@
         const has = [...$("setorSelect").options].some(o => o.value === s);
         if (has) $("setorSelect").value = s;
       }
+
       if (pendingApplyFilters?.ano) {
         const a = String(pendingApplyFilters.ano);
         const has = [...$("anoSelect").options].some(o => o.value === a);
         if (has) $("anoSelect").value = a;
       }
 
+      updateCustomDiretoriaDisplay();
+      updateCustomSetorDisplay();
+      updateCustomAnoDisplay();
+
       pendingApplyFilters = null;
 
       renderFromServer(data0, lastDataNoAno);
       setStatus("ok", "ok");
     } catch (e) {
-      $("latency").textContent = "—";
       showError(`Falha ao carregar: ${e.message}`);
     }
   }
@@ -1772,38 +2387,41 @@
     if (sec > 0) timer = setInterval(loadDashboard, sec * 1000);
   }
 
-  $("dirSelect").addEventListener("change", () => {
-    $("setorSelect").value = "__ALL__";
-    const hasDir = $("dirSelect").value !== "__ALL__";
-    $("setorSelect").disabled = !hasDir;
-
-    scheduleLoad();
-    renderTipoExamePorSetor(safeArray(lastData?.por_tipo_exame_setor));
-  });
-
-  $("setorSelect").addEventListener("change", () => {
-    scheduleLoad();
-    renderTipoExamePorSetor(safeArray(lastData?.por_tipo_exame_setor));
-  });
-
-  $("anoSelect").addEventListener("change", () => scheduleLoad());
+  $("dirDisplay").addEventListener("click", toggleDirMenu);
+  $("setorDisplay").addEventListener("click", toggleSetorMenu);
+  $("anoDisplay").addEventListener("click", toggleAnoMenu);
+  $("refreshDisplay").addEventListener("click", toggleRefreshMenu);
 
   $("btnReset").addEventListener("click", () => {
+    $("dirSelect").innerHTML = `<option value="__ALL__">Todas as diretorias</option>`;
     $("dirSelect").value = "__ALL__";
+    $("dirMenu").innerHTML = "";
+    updateCustomDiretoriaDisplay();
+    closeDirMenu();
 
-    $("setorSelect").innerHTML = `<option value="__ALL__">Selecione um setor</option>`;
+    $("setorSelect").innerHTML = `<option value="__ALL__" data-desc="">Selecione o setor</option>`;
     $("setorSelect").value = "__ALL__";
     $("setorSelect").disabled = true;
+    $("setorDisplay").disabled = true;
+    $("setorMenu").innerHTML = "";
+    updateCustomSetorDisplay();
+    closeSetorMenu();
 
     $("anoSelect").innerHTML = `<option value="__ALL__">Todos os anos</option>`;
     $("anoSelect").value = "__ALL__";
-    $("anoSelect").disabled = false;
+    $("anoMenu").innerHTML = "";
+    updateCustomAnoDisplay();
+    closeAnoMenu();
+
+    $("refresh").value = "30";
+    buildRefreshOptions();
+    updateCustomRefreshDisplay();
+    closeRefreshMenu();
 
     $("dirBadge").textContent = "Todas";
     $("setorBadge").textContent = "Todos";
     $("anoBadge").textContent = "Todos";
-    $("setorReqBadge").textContent = "—";
-
+    
     lastDataNoAno = null;
 
     if (chartTipoExame) { chartTipoExame.destroy(); chartTipoExame = null; }
@@ -1826,7 +2444,6 @@
   })();
 
   $("btnLoad").addEventListener("click", loadDashboard);
-  $("refresh").addEventListener("change", setAutoRefresh);
 
   $("buildInfo").textContent = `Desenvolvimento: Paulo Lima & Roniselton Barreto - v11 - ${new Date().getFullYear()}`;
 
@@ -1876,7 +2493,12 @@
     }
   });
 
+  buildRefreshOptions();
   setAutoRefresh();
+  updateCustomDiretoriaDisplay();
+  updateCustomSetorDisplay();
+  updateCustomAnoDisplay();
+  updateCustomRefreshDisplay();
   loadDashboard();
 </script>
 </body>
