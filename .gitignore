@@ -1,0 +1,10 @@
+/.venv
+/backup_hom.sql
+/DashboarSQL.sql
+/Docker
+/galileiWebService.war
+/galileu.war
+/galileuconsulta.war
+/galileu_db.backup
+/install_Python.txt
+/ROOT.war

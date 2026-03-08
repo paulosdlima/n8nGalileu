@@ -1,0 +1,1883 @@
+<!doctype html>
+<html lang="pt-br" data-theme="dark">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Sistema Galileu</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+
+  <style>
+    :root{
+      --bg:#0b0f19;
+      --bg2:#0a1022;
+      --text:#e8efff;
+      --muted:#9fb0d0;
+      --line:rgba(255,255,255,.08);
+
+      --good:#00C853;
+      --warn:#ffcc00;
+      --bad:#FF1744;
+      --accent:#4b7bff;
+
+      --shadow:0 18px 70px rgba(0,0,0,.35);
+      --radius:18px;
+    }
+
+    html[data-theme="dark"]{
+      --bg:#0b0f19;
+      --bg2:#0a1022;
+      --card1:rgba(18,26,42,.92);
+      --card2:rgba(18,26,42,.62);
+      --muted:#9fb0d0;
+      --text:#e8efff;
+      --line:rgba(255,255,255,.08);
+
+      --good:#00C853;
+      --warn:#ffcc00;
+      --bad:#FF1744;
+      --accent:#4b7bff;
+
+      --bgAccent1:#1b2a55;
+      --bgAccent2:rgba(75,123,255,.18);
+      --bgAccent3:rgba(0,200,83,.10);
+
+      --chartTick:#9fb0d0;
+      --chartGrid:rgba(37,50,80,.55);
+      --chartBorder:rgba(232,239,255,0.9);
+
+      --inst-barFill: rgba(54, 99, 181, 0.35);
+      --inst-barLine: rgba(54, 99, 181, 0.75);
+      --inst-line:    rgba(220, 38, 38, 0.95);
+      --inst-area0:   rgba(220, 38, 38, 0.18);
+      --inst-area1:   rgba(220, 38, 38, 0.02);
+
+      --panelHi: rgba(18,26,42,.72);
+      --panelLo: rgba(18,26,42,.38);
+
+      --controlBg: rgba(18,26,42,.55);
+      --controlBgHover: rgba(18,26,42,.62);
+      --controlBgFocus: rgba(18,26,42,.82);
+      --controlBorder: rgba(255,255,255,.10);
+
+      --gridLine1: rgba(255,255,255,.03);
+      --gridLineOpacity: .18;
+    }
+
+    html[data-theme="light"]{
+      --bg:#f6f8ff;
+      --bg2:#eef3ff;
+      --card1:rgba(255,255,255,.92);
+      --card2:rgba(255,255,255,.70);
+      --muted:#4a5a77;
+      --text:#0c1222;
+      --line:rgba(10,18,34,.10);
+
+      --accent:#2a5bff;
+      --good:#00A94E;
+      --warn:#C48A00;
+      --bad:#E11D48;
+
+      --bgAccent1:#dbe7ff;
+      --bgAccent2:rgba(42,91,255,.16);
+      --bgAccent3:rgba(0,169,78,.10);
+
+      --chartTick:#44506b;
+      --chartGrid:rgba(12,18,34,.12);
+      --chartBorder:rgba(12,18,34,.20);
+
+      --inst-barFill: rgba(42, 91, 255, 0.22);
+      --inst-barLine: rgba(42, 91, 255, 0.55);
+      --inst-line:    rgba(225, 29, 72, 0.85);
+      --inst-area0:   rgba(225, 29, 72, 0.14);
+      --inst-area1:   rgba(225, 29, 72, 0.02);
+
+      --panelHi: rgba(255,255,255,.86);
+      --panelLo: rgba(255,255,255,.66);
+
+      --controlBg: rgba(255,255,255,.78);
+      --controlBgHover: rgba(255,255,255,.86);
+      --controlBgFocus: rgba(255,255,255,.92);
+      --controlBorder: rgba(12,18,34,.14);
+
+      --gridLine1: rgba(10,18,34,.05);
+      --gridLineOpacity: .16;
+
+      --shadow:0 18px 70px rgba(10,18,34,.18);
+    }
+
+    html[data-theme="ssp"]{
+      --bg:#07121a;
+      --bg2:#051019;
+      --card1:rgba(9,24,34,.92);
+      --card2:rgba(9,24,34,.62);
+      --muted:#a8bdd8;
+      --text:#e8efff;
+      --line:rgba(255,255,255,.10);
+
+      --accent:#0ea5e9;
+      --good:#00C853;
+      --warn:#fbbf24;
+      --bad:#ef4444;
+
+      --bgAccent1:#0b2a3c;
+      --bgAccent2:rgba(14,165,233,.16);
+      --bgAccent3:rgba(0,200,83,.10);
+
+      --chartTick:#a6b7d6;
+      --chartGrid:rgba(60,90,120,.40);
+      --chartBorder:rgba(232,239,255,0.85);
+
+      --inst-barFill: rgba(14, 165, 233, 0.26);
+      --inst-barLine: rgba(14, 165, 233, 0.60);
+      --inst-line:    rgba(0, 200, 83, 0.85);
+      --inst-area0:   rgba(0, 200, 83, 0.14);
+      --inst-area1:   rgba(0, 200, 83, 0.02);
+
+      --panelHi: rgba(9,24,34,.78);
+      --panelLo: rgba(9,24,34,.44);
+
+      --controlBg: rgba(9,24,34,.60);
+      --controlBgHover: rgba(9,24,34,.70);
+      --controlBgFocus: rgba(9,24,34,.82);
+      --controlBorder: rgba(255,255,255,.12);
+
+      --gridLine1: rgba(255,255,255,.035);
+      --gridLineOpacity: .18;
+    }
+
+    html,body{width:100%;height:100%;margin:0}
+    *{box-sizing:border-box}
+
+    body{
+      font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+      background:
+        radial-gradient(1200px 600px at 15% 10%, var(--bgAccent1) 0%, var(--bg) 55%),
+        radial-gradient(900px 520px at 85% 0%, var(--bgAccent2) 0%, transparent 55%),
+        radial-gradient(700px 500px at 20% 90%, var(--bgAccent3) 0%, transparent 55%),
+        linear-gradient(180deg, var(--bg2), var(--bg));
+      color:var(--text);
+      min-height:100vh;
+      overflow-x:hidden;
+    }
+
+    body:before{
+      content:"";
+      position:fixed; inset:0;
+      background:
+        linear-gradient(transparent 0, transparent 24px, var(--gridLine1) 25px),
+        linear-gradient(90deg, transparent 0, transparent 24px, var(--gridLine1) 25px);
+      background-size:25px 25px;
+      opacity:var(--gridLineOpacity);
+      pointer-events:none;
+      mask-image: radial-gradient(800px 600px at 20% 20%, black 0%, transparent 60%);
+    }
+
+    .wrap{width:100%;max-width:none;margin:0;padding:18px 22px}
+    .container{max-width:1600px;margin:0 auto}
+
+    header{
+      display:flex;
+      justify-content:space-between;
+      gap:14px;
+      align-items:flex-start;
+      flex-wrap:wrap;
+      padding:14px 14px 10px 14px;
+      border:1px solid var(--line);
+      background:linear-gradient(180deg, var(--panelHi), var(--panelLo));
+      border-radius:calc(var(--radius) + 2px);
+      box-shadow:var(--shadow);
+      backdrop-filter: blur(10px);
+      position: sticky;
+      top: 12px;
+      z-index: 50;
+    }
+
+    .title h1{
+      margin:0;
+      font-size:20px;
+      letter-spacing:.2px;
+      display:flex;
+      gap:10px;
+      align-items:center;
+    }
+
+    .title .sub{
+      margin-top:8px;
+      color:var(--muted);
+      font-size:12px;
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      align-items:center;
+      line-height:1.2;
+    }
+
+    .controls{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:center;
+      justify-content:flex-end;
+    }
+
+    .input,.btn,select{
+      border:1px solid var(--controlBorder);
+      background: var(--controlBg);
+      color:var(--text);
+      border-radius:12px;
+      padding:10px 12px;
+      font-size:13px;
+      outline:none;
+      box-shadow: 0 10px 26px rgba(0,0,0,.18);
+      transition: border-color .15s ease, transform .15s ease, background .15s ease, box-shadow .15s ease;
+    }
+
+    .input{width:380px;max-width:100%}
+    .input:focus, select:focus{
+      border-color: color-mix(in srgb, var(--accent) 60%, transparent);
+      box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 18%, transparent), 0 16px 34px rgba(0,0,0,.28);
+      background: var(--controlBgFocus);
+    }
+
+    .btn{
+      cursor:pointer;
+      user-select:none;
+      display:inline-flex;
+      gap:8px;
+      align-items:center;
+      justify-content:center;
+      font-weight:650;
+      white-space:nowrap;
+    }
+    .btn:hover{transform:translateY(-1px); background: var(--controlBgHover);}
+    .btn:active{transform:translateY(0);opacity:.92}
+
+    .btn.primary{
+      border-color: color-mix(in srgb, var(--accent) 45%, transparent);
+      background:
+        radial-gradient(700px 120px at 10% 0%, color-mix(in srgb, var(--accent) 35%, transparent) 0%, transparent 55%),
+        linear-gradient(180deg, color-mix(in srgb, var(--accent) 20%, transparent), var(--controlBgFocus));
+    }
+
+    .btn.ghost{
+      background: color-mix(in srgb, var(--controlBg) 70%, transparent);
+      border-color: color-mix(in srgb, var(--controlBorder) 90%, transparent);
+    }
+
+    .btn.theme{
+      gap:10px;
+      padding:10px 14px;
+      border-color: var(--controlBorder);
+      background:
+        radial-gradient(700px 120px at 10% 0%, color-mix(in srgb, var(--good) 22%, transparent) 0%, transparent 55%),
+        radial-gradient(700px 120px at 90% 0%, color-mix(in srgb, var(--accent) 22%, transparent) 0%, transparent 55%),
+        color-mix(in srgb, var(--controlBg) 85%, transparent);
+    }
+    .btn.theme .icon{font-size:16px;line-height:1}
+    .btn.theme .label{font-weight:750}
+
+    .pill{
+      display:inline-flex;gap:8px;align-items:center;
+      padding:8px 10px;
+      border:1px solid color-mix(in srgb, var(--line) 70%, transparent);
+      border-radius:999px;
+      color:var(--muted);
+      background:color-mix(in srgb, var(--controlBg) 75%, transparent);
+      font-size:12px;
+      backdrop-filter: blur(8px);
+    }
+
+    .badge{
+      padding:4px 8px;
+      border-radius:999px;
+      border:1px solid color-mix(in srgb, var(--line) 70%, transparent);
+      color:var(--muted);
+      font-size:12px;
+      background:color-mix(in srgb, var(--text) 3%, transparent);
+      max-width:520px;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      white-space:nowrap;
+    }
+
+    .badge.ok{color:var(--good);border-color:color-mix(in srgb, var(--good) 30%, transparent);background:color-mix(in srgb, var(--good) 10%, transparent)}
+    .badge.warn{color:var(--warn);border-color:color-mix(in srgb, var(--warn) 30%, transparent);background:color-mix(in srgb, var(--warn) 10%, transparent)}
+    .badge.bad{color:var(--bad);border-color:color-mix(in srgb, var(--bad) 30%, transparent);background:color-mix(in srgb, var(--bad) 10%, transparent)}
+
+    .dot{width:10px;height:10px;border-radius:999px;background:var(--muted);display:inline-block}
+    .dot.ok{background:var(--good)}
+    .dot.bad{background:var(--bad)}
+    .dot.warn{background:var(--warn)}
+
+    .grid{
+      margin-top:14px;
+      display:grid;
+      grid-template-columns:repeat(12,1fr);
+      gap:16px;
+    }
+    .span-12{grid-column:span 12}
+    .span-6{grid-column:span 6}
+    .span-4{grid-column:span 4}
+
+    .card{
+      background:
+        radial-gradient(900px 220px at 10% 0%, color-mix(in srgb, var(--accent) 14%, transparent) 0%, transparent 60%),
+        linear-gradient(180deg, var(--card1), var(--card2));
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      padding:14px;
+      box-shadow:var(--shadow);
+      backdrop-filter: blur(10px);
+      position:relative;
+      overflow:hidden;
+    }
+
+    .card:before{
+      content:"";
+      position:absolute;
+      inset:-1px;
+      border-radius:inherit;
+      padding:1px;
+      background: linear-gradient(
+        135deg,
+        color-mix(in srgb, var(--accent) 45%, transparent),
+        color-mix(in srgb, var(--good) 22%, transparent),
+        color-mix(in srgb, var(--warn) 16%, transparent),
+        color-mix(in srgb, var(--bad) 22%, transparent)
+      );
+      -webkit-mask:
+        linear-gradient(#000 0 0) content-box,
+        linear-gradient(#000 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      opacity:.55;
+      pointer-events:none;
+    }
+    html[data-theme="light"] .card:before{opacity:.28}
+
+    .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:space-between}
+    .muted{color:var(--muted)}
+    .mini{font-size:12px;color:var(--muted)}
+
+    .kpis{display:grid;grid-template-columns:repeat(7,1fr);gap:12px}
+    .kpi{
+      padding:14px;
+      border:1px solid color-mix(in srgb, var(--line) 70%, transparent);
+      border-radius:16px;
+      background:
+        radial-gradient(700px 140px at 20% 0%, color-mix(in srgb, var(--accent) 16%, transparent) 0%, transparent 60%),
+        color-mix(in srgb, var(--text) 3%, transparent);
+      box-shadow: 0 12px 30px rgba(0,0,0,.20);
+      min-height:92px;
+    }
+    html[data-theme="light"] .kpi{ box-shadow: 0 12px 30px rgba(10,18,34,.12); }
+    .kpi .label{color:var(--muted);font-size:12px}
+    .kpi .value{margin-top:6px;font-size:22px;font-weight:800;letter-spacing:.2px;text-shadow: 0 10px 26px rgba(0,0,0,.35)}
+    html[data-theme="light"] .kpi .value{text-shadow:none}
+    .kpi .hint{margin-top:6px;color:var(--muted);font-size:11px}
+
+    canvas{width:100% !important;height:320px !important}
+    .card-3col canvas{height:260px !important}
+    .card-tall canvas{height:520px !important;}
+
+    .chart-wrap{
+      border:1px solid color-mix(in srgb, var(--line) 70%, transparent);
+      border-radius:16px;
+      padding:12px;
+      background:
+        radial-gradient(600px 180px at 0% 0%, color-mix(in srgb, var(--good) 10%, transparent) 0%, transparent 60%),
+        color-mix(in srgb, var(--text) 3%, transparent);
+      box-shadow: 0 10px 26px rgba(0,0,0,.18);
+    }
+    html[data-theme="light"] .chart-wrap{
+      box-shadow: 0 10px 26px rgba(10,18,34,.10);
+    }
+
+    .err{
+      color:#ff9aa2;background:rgba(255,0,80,.08);
+      border:1px solid rgba(255,0,80,.22);
+      padding:10px 12px;border-radius:14px;margin-top:14px;display:none;white-space:pre-wrap;
+    }
+    html[data-theme="light"] .err{
+      color:#9f1239;background:rgba(225,29,72,.08);
+      border:1px solid rgba(225,29,72,.20);
+    }
+
+    .page-footer{
+      margin-top:16px;
+      border:1px solid color-mix(in srgb, var(--line) 85%, transparent);
+      border-radius:var(--radius);
+      background:linear-gradient(180deg, var(--panelHi), var(--panelLo));
+      box-shadow:var(--shadow);
+      backdrop-filter: blur(10px);
+      position:relative;
+      overflow:hidden;
+    }
+
+    .page-footer::before{
+      content:"";
+      position:absolute;
+      left:12px;
+      right:12px;
+      top:0;
+      height:1px;
+      background:linear-gradient(90deg, transparent, var(--accent), transparent);
+      opacity:.55;
+      pointer-events:none;
+    }
+
+    .page-footer .inner{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:10px;
+      padding:10px 14px;
+      color:var(--muted);
+      font-size:12px;
+      letter-spacing:.2px;
+    }
+
+    .page-footer .inner > div{
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      max-width:48%;
+    }
+
+    @media (max-width:1400px){
+      .kpis{grid-template-columns:repeat(4,1fr)}
+    }
+    @media (max-width:1200px){
+      .kpis{grid-template-columns:repeat(3,1fr)}
+      .input{width:320px}
+      .card-tall canvas{height:460px !important;}
+    }
+    @media (max-width:1050px){
+      .kpis{grid-template-columns:repeat(2,1fr)}
+      .span-4{grid-column:span 12}
+      .span-6{grid-column:span 12}
+      canvas{height:260px !important}
+      .card-3col canvas{height:260px !important}
+      .wrap{padding:14px}
+      header{padding:12px}
+      .card-tall canvas{height:420px !important;}
+    }
+    @media (max-width:560px){
+      .title h1{font-size:18px}
+      .input{width:100%}
+      .badge{max-width:320px}
+      .card-tall canvas{height:380px !important;}
+      .kpis{grid-template-columns:1fr}
+
+      .page-footer .inner{
+        flex-direction:column;
+        align-items:flex-start;
+      }
+      .page-footer .inner > div{max-width:100%;}
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <div class="container">
+      <header>
+        <div class="title">
+          <h1>📊 Sistema Estatístico Pericial - Sistema Galileu</h1>
+          <div class="sub">
+            <span class="pill"><span class="dot" id="dot"></span> <span id="statusText">aguardando</span></span>
+            <span class="badge" id="apiBadge">/data</span>
+            <span class="badge">Atualizado: <span id="updatedAt">—</span></span>
+            <span class="badge">Carregamento: <span id="latency">—</span></span>
+            <span class="badge">Diretoria: <span id="dirBadge">Todas</span></span>
+            <span class="badge">Setor: <span id="setorBadge">Todos</span></span>
+            <span class="badge">Ano: <span id="anoBadge">Todos</span></span>
+            <span class="badge">Setor Req.: <span id="setorReqBadge">—</span></span>
+          </div>
+        </div>
+
+        <div class="controls">
+          <input class="input" id="apiUrl" placeholder="URL do webhook UI (sem /data)" />
+
+          <select id="dirSelect" title="Filtrar diretoria">
+            <option value="__ALL__" selected>Todas as diretorias</option>
+          </select>
+
+          <select id="setorSelect" title="Filtrar setor (setor_sigla)" disabled>
+            <option value="__ALL__" selected>Selecione o setor</option>
+          </select>
+
+          <select id="anoSelect" title="Filtrar ano">
+            <option value="__ALL__" selected>Todos os anos</option>
+          </select>
+
+          <select id="refresh" title="Auto-refresh">
+            <option value="0">Sem auto-refresh</option>
+            <option value="10">Auto: 10s</option>
+            <option value="30" selected>Auto: 30s</option>
+            <option value="60">Auto: 60s</option>
+          </select>
+
+          <button type="button" class="btn ghost theme" id="themeToggle" title="Alternar tema (Claro / Escuro / SSP)">
+            <span class="icon" id="themeIcon">🌙</span>
+            <span class="label" id="themeLabel">Tema escuro</span>
+          </button>
+
+          <button class="btn primary" id="btnLoad">Atualizar</button>
+          <button class="btn ghost" id="btnReset" title="Limpa filtros e recarrega">Reset</button>
+        </div>
+      </header>
+
+      <div class="err" id="errBox"></div>
+
+      <section class="grid">
+        <div class="card span-12">
+          <div class="row">
+            <h3 style="margin:0;">Resumo</h3>
+            <span class="pill">Fonte: <span class="muted" id="sourceHint">—</span></span>
+          </div>
+
+          <div class="kpis" style="margin-top:10px;">
+            <div class="kpi">
+              <div class="label">Total de registros</div>
+              <div class="value" id="k_total">—</div>
+              <div class="hint" id="k_total_hint">Entradas no período</div>
+            </div>
+            <div class="kpi">
+              <div class="label">Com requisição</div>
+              <div class="value" id="k_com">—</div>
+              <div class="hint" style="display: inline-block;">
+                <div style="display: inline-block;" id="k_sem">—</div> Sem Requisição
+              </div>
+            </div>
+            <div class="kpi">
+              <div class="label">Com procedimento</div>
+              <div class="value" id="k_proc_sim">—</div>
+              <div class="hint" style="display: inline-block;">
+                <div style="display: inline-block;" id="k_proc_nao">—</div> Sem procedimento
+              </div>
+            </div>
+            <div class="kpi">
+              <div class="label">Perícia Concluída</div>
+              <div class="value" id="k_fin">—</div>
+              <div class="hint">Concluídas no período</div>
+            </div>
+            <div class="kpi">
+              <div class="label">Não Concluídos</div>
+              <div class="value" id="k_nfin">—</div>
+              <div class="hint">Demais Status do período</div>
+            </div>
+            <div class="kpi">
+              <div class="label">Exames em Pausa</div>
+              <div class="value" id="k_pausa">—</div>
+              <div class="hint">Do período</div>
+            </div>
+            <div class="kpi">
+              <div class="label">Laudos Entregues</div>
+              <div class="value" id="k_ent_total">—</div>
+              <div class="hint" style="display: inline-block;">
+                <div style="display: inline-block;" id="k_ent_periodo">—</div> Entregues no período
+              </div>
+            </div>
+            
+          </div>
+        </div>
+
+        <div class="card span-12">
+          <div class="row">
+            <h3 style="margin:0;" id="evolTitle">Evolução mensal</h3>
+            <span class="pill" id="evolPill">📈 linha + barras</span>
+          </div>
+          <canvas id="chMes"></canvas>
+        </div>
+
+        <div class="card span-12" id="cardFluxoMes" style="display:none;">
+          <div class="row">
+            <div>
+              <h3 style="margin:0;" id="fluxoTitle">Entradas x Laudos Entregues x Estoque (mês)</h3>
+              <div class="mini muted" id="fluxoHint" style="margin-top:6px;"></div>
+            </div>
+            <span class="pill" id="fluxoPill">📊 2 barras + 1 linha + eixo duplo</span>
+          </div>
+          <canvas id="chFluxoMes"></canvas>
+        </div>
+
+        <div class="card span-4 card-3col">
+          <div class="row">
+            <h3 style="margin:0;">Diretorias</h3>
+            <span class="pill">🏛️</span>
+          </div>
+          <canvas id="chDiretoria"></canvas>
+        </div>
+
+        <div class="card span-4 card-3col">
+          <div class="row">
+            <h3 style="margin:0;">Requisição</h3>
+            <span class="pill">🧭 Gauge</span>
+          </div>
+          <canvas id="chReq"></canvas>
+        </div>
+
+        <div class="card span-4 card-3col">
+          <div class="row">
+            <h3 style="margin:0;">Status do laudo</h3>
+            <span class="pill">🧾 Donut</span>
+          </div>
+          <canvas id="chLaudo"></canvas>
+        </div>
+
+        <div class="card span-6" id="cardTopSetores">
+          <div class="row">
+            <h3 style="margin:0;">Setores</h3>
+            <span class="pill">🏷️ Top 10</span>
+          </div>
+          <div class="chart-wrap" style="margin-top:10px;">
+            <canvas id="chSetor"></canvas>
+          </div>
+        </div>
+
+        <div class="card span-6" id="cardSetorReq">
+          <div class="row">
+            <h3 style="margin:0;">Setor requisitante</h3>
+            <span class="pill">📥 Top 15</span>
+          </div>
+          <div class="chart-wrap" style="margin-top:10px;">
+            <canvas id="chSetorReq"></canvas>
+          </div>
+        </div>
+
+        <div class="card span-12 card-tall" id="cardTipoExameSetor" style="display:none;">
+          <div class="row">
+            <h3 style="margin:0;">Tipos de exame do setor selecionado</h3>
+            <span class="pill">📊 barras</span>
+          </div>
+          <div class="mini muted" id="tipoExameHint" style="margin-top:6px;"></div>
+          <canvas id="chTipoExame"></canvas>
+        </div>
+      </section>
+
+      <footer class="page-footer">
+        <div class="inner">
+          <div>Sistema Galileu @ 2026</div>
+          <div id="buildInfo">Desenvolvimento: Paulo Lima & Roniselton Barreto - v11 - 2026</div>
+        </div>
+      </footer>
+    </div>
+  </div>
+
+<script>
+  const $ = (id) => document.getElementById(id);
+
+  let lastData = null;
+  let lastDataNoAno = null;
+  let timer = null;
+
+  let chartMes = null;
+  let chartReq = null;
+  let chartSetor = null;
+  let chartDiretoria = null;
+  let chartLaudo = null;
+  let chartSetorReq = null;
+  let chartTipoExame = null;
+  let chartFluxoMes = null;
+
+  let topN = 15;
+
+  let pendingLoad = null;
+  function scheduleLoad(delayMs = 120){
+    if (pendingLoad) clearTimeout(pendingLoad);
+    pendingLoad = setTimeout(() => loadDashboard(), delayMs);
+  }
+
+  function cssVar(name, fallback=""){
+    const v = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+    return v || fallback;
+  }
+
+  function getThemeCharts(){
+    return {
+      tick: cssVar("--chartTick", "#9fb0d0"),
+      grid: cssVar("--chartGrid", "rgba(37,50,80,.55)"),
+      border: cssVar("--chartBorder", "rgba(232,239,255,0.9)"),
+      inst: {
+        barFill: cssVar("--inst-barFill", "rgba(54, 99, 181, 0.35)"),
+        barLine: cssVar("--inst-barLine", "rgba(54, 99, 181, 0.75)"),
+        line:    cssVar("--inst-line",    "rgba(220, 38, 38, 0.95)"),
+        area0:   cssVar("--inst-area0",   "rgba(220, 38, 38, 0.18)"),
+        area1:   cssVar("--inst-area1",   "rgba(220, 38, 38, 0.02)")
+      }
+    };
+  }
+
+  const CenterTextPlugin = {
+    id: "centerText",
+    afterDraw(chart, args, pluginOptions) {
+      const { ctx } = chart;
+      const meta = chart.getDatasetMeta(0);
+      if (!meta?.data?.length) return;
+
+      const total = chart.data.datasets[0].data.reduce((a,b)=>a+Number(b||0), 0);
+      const val = Number(pluginOptions?.value ?? 0);
+      const pct = total > 0 ? Math.round((val/total)*100) : 0;
+
+      const x = meta.data[0].x;
+      const y = meta.data[0].y;
+
+      const tick = cssVar("--chartTick", "#9fb0d0");
+      const text = cssVar("--text", "#e8efff");
+
+      ctx.save();
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+
+      ctx.font = "800 30px system-ui,-apple-system,Segoe UI,Roboto,Arial";
+      ctx.fillStyle = text;
+      ctx.fillText(`${pct}%`, x, y - 6);
+
+      ctx.font = "600 12px system-ui,-apple-system,Segoe UI,Roboto,Arial";
+      ctx.fillStyle = tick;
+      ctx.fillText("COM REQUISIÇÃO", x, y + 18);
+
+      ctx.restore();
+    }
+  };
+
+  const SETOR_COLORS = { "DPC":"#4b7bff","DPP":"#3ddc97","DML":"#ffcc00","IC":"#ff5c7a" };
+
+  const LAUDO_COLORS = {
+    "LAUDO ENTREGUE": { fill:"rgba(0,200,83,0.90)",  line:"rgba(0,200,83,1)" },
+    "NÃO ENTREGUE":   { fill:"rgba(255,23,68,0.90)", line:"rgba(255,23,68,1)" }
+  };
+
+  function hashColor(str) {
+    let h = 0;
+    for (let i = 0; i < str.length; i++) h = (h * 31 + str.charCodeAt(i)) >>> 0;
+    const hue = h % 360;
+    return `hsl(${hue} 78% 55%)`;
+  }
+
+  function withAlphaHslOrHex(color, alpha = 0.65) {
+    if (!color) return `rgba(255,255,255,${alpha})`;
+    if (color.startsWith("hsl(")) return color.replace("hsl(", "hsla(").replace(")", ` / ${alpha})`);
+    if (color.startsWith("hsla(")) return color;
+    if (color.startsWith("rgba(")) return color;
+    const hex = color.replace("#", "");
+    const r = parseInt(hex.substring(0,2), 16);
+    const g = parseInt(hex.substring(2,4), 16);
+    const b = parseInt(hex.substring(4,6), 16);
+    return `rgba(${r},${g},${b},${alpha})`;
+  }
+
+  function stableColor(key){
+    const base = hashColor(String(key ?? "(NULL)"));
+    return { fill: withAlphaHslOrHex(base, 0.72), line: withAlphaHslOrHex(base, 1.0) };
+  }
+
+  function colorForSetor(sigla) {
+    const s = (sigla || "").toString().trim();
+    return SETOR_COLORS[s] || hashColor(s || "SETOR");
+  }
+
+  function setStatus(text, type="warn") {
+    $("statusText").textContent = text;
+    const dot = $("dot");
+    dot.classList.remove("ok","bad","warn");
+    dot.classList.add(type);
+    const badge = $("apiBadge");
+    badge.classList.remove("ok","bad","warn");
+    badge.classList.add(type);
+  }
+
+  function showError(msg) {
+    const box = $("errBox");
+    box.style.display = "block";
+    box.textContent = msg;
+    setStatus("erro", "bad");
+  }
+
+  function clearError() {
+    const box = $("errBox");
+    box.style.display = "none";
+    box.textContent = "";
+  }
+
+  function fmt(n) {
+    if (n === null || n === undefined || Number.isNaN(Number(n))) return "—";
+    return new Intl.NumberFormat("pt-BR").format(Number(n));
+  }
+
+  function safeArray(v) { return Array.isArray(v) ? v : []; }
+  function uniq(arr){ return [...new Set(arr)]; }
+  function norm(v){ return String(v ?? "").trim().toUpperCase(); }
+
+  function currentDiretoria(){
+    const v = $("dirSelect").value;
+    return v === "__ALL__" ? null : v;
+  }
+
+  function currentSetor(){
+    const v = $("setorSelect").value;
+    return v === "__ALL__" ? null : v;
+  }
+
+  function currentAno(){
+    const v = $("anoSelect").value;
+    if (v === "__ALL__") return null;
+    const n = Number(v);
+    return Number.isFinite(n) ? n : null;
+  }
+
+  function isAllYearsMode(){
+    const v = String($("anoSelect").value || "__ALL__").trim();
+    return (v === "__ALL__" || v === "" || v.toUpperCase().startsWith("TODOS"));
+  }
+
+  function syncUiQueryToUrl(){
+    const p = new URLSearchParams(window.location.search);
+    const dir = currentDiretoria();
+    const setor = currentSetor();
+    const ano = currentAno();
+
+    if (dir) p.set("diretoria", dir); else p.delete("diretoria");
+    if (setor) p.set("setor", setor); else p.delete("setor");
+    if (ano) p.set("ano", String(ano)); else p.delete("ano");
+
+    const qs = p.toString();
+    const newUrl = qs ? `${window.location.pathname}?${qs}` : window.location.pathname;
+    window.history.replaceState({}, "", newUrl);
+  }
+
+  const initialFilters = (() => {
+    const p = new URLSearchParams(window.location.search);
+    const dir = (p.get("diretoria") || "").trim();
+    const setor = (p.get("setor") || "").trim();
+    const ano = (p.get("ano") || "").trim();
+    return {
+      diretoria: dir || null,
+      setor: setor || null,
+      ano: ano && /^\d{4}$/.test(ano) ? Number(ano) : null
+    };
+  })();
+
+  let pendingApplyFilters = { ...initialFilters };
+
+  function guessBaseFromPageHost(){
+    const host = window.location.hostname || "localhost";
+    const protocol = window.location.protocol || "http:";
+    const proto = protocol.startsWith("http") ? protocol : "http:";
+    return `${proto}//${host}:5678/webhook/dashboard/staging_exames`;
+  }
+
+  function buildDataUrl(opts = {}) {
+    let base = $("apiUrl").value.trim();
+    if (!base) return null;
+
+    base = base.replace(/\/+$/, "");
+    if (!base.endsWith("/data")) base = base + "/data";
+
+    const params = new URLSearchParams();
+    const dir = currentDiretoria();
+    const setor = currentSetor();
+    const ano = currentAno();
+
+    if (dir) params.set("diretoria", dir);
+    if (setor) params.set("setor", setor);
+
+    if (!opts.omitAno && ano) params.set("ano", String(ano));
+
+    const qs = params.toString();
+    return qs ? `${base}?${qs}` : base;
+  }
+
+  function parsePossiblyWrappedJsonText(trimmed){
+    let data0 = null;
+
+    try {
+      data0 = JSON.parse(trimmed);
+    } catch {
+      const unwrapped = trimmed.replace(/^\uFEFF/, "");
+      data0 = JSON.parse(unwrapped);
+      if (typeof data0 === "string") data0 = JSON.parse(data0);
+    }
+
+    if (Array.isArray(data0)) {
+      if (data0.length === 1 && data0[0]?.json) data0 = data0[0].json;
+    } else if (data0?.json && typeof data0.json === "object") {
+      data0 = data0.json;
+    }
+
+    return data0;
+  }
+
+  function groupTotaisByYearFromPorMes(porMesRows){
+    const m = new Map();
+    for (const r of safeArray(porMesRows)){
+      const mes = String(r.mes ?? "").trim();
+      if (!mes) continue;
+      const ano = mes.slice(0,4);
+      const v = Number(r.total ?? 0);
+      m.set(ano, (m.get(ano) || 0) + v);
+    }
+    const labels = [...m.keys()].sort();
+    const values = labels.map(y => m.get(y));
+    return { labels, values };
+  }
+
+  function groupFluxoByYear(fluxoRows){
+    const acc = new Map();
+    for (const r of safeArray(fluxoRows)){
+      const mes = String(r.mes ?? "").trim();
+      if (!mes) continue;
+      const ano = mes.slice(0,4);
+      const entradas = Number(r.entradas ?? 0);
+      const entregues = Number(r.entregues ?? 0);
+      const backlogEnd = Number(r.backlog_pendente ?? 0);
+
+      const cur = acc.get(ano) || { entradas:0, entregues:0, backlogEnd:0, lastMes:"" };
+      cur.entradas += entradas;
+      cur.entregues += entregues;
+
+      if (!cur.lastMes || mes > cur.lastMes){
+        cur.lastMes = mes;
+        cur.backlogEnd = backlogEnd;
+      }
+      acc.set(ano, cur);
+    }
+
+    const labels = [...acc.keys()].sort();
+    const entradas = labels.map(y => acc.get(y).entradas);
+    const entregues = labels.map(y => acc.get(y).entregues);
+    const backlog = labels.map(y => acc.get(y).backlogEnd);
+
+    const lastLabel = labels[labels.length - 1];
+    const lastObj = lastLabel ? {
+      entradas: acc.get(lastLabel).entradas,
+      entregues: acc.get(lastLabel).entregues,
+      backlogEnd: acc.get(lastLabel).backlogEnd
+    } : null;
+
+    return { labels, entradas, entregues, backlog, lastLabel, lastObj };
+  }
+
+  function fluxoColors(){
+    const CH = getThemeCharts();
+    const INST = CH.inst;
+
+    return {
+      tick: CH.tick,
+      grid: CH.grid,
+
+      inFill: withAlphaHslOrHex(cssVar("--accent","#4b7bff"), 0.55),
+      inLine: withAlphaHslOrHex(cssVar("--accent","#4b7bff"), 1),
+
+      outFill: withAlphaHslOrHex(cssVar("--good","#00C853"), 0.65),
+      outLine: withAlphaHslOrHex(cssVar("--good","#00C853"), 1),
+
+      backFill: INST.area0,
+      backFillSoft: INST.area1,
+      backLine: INST.line
+    };
+  }
+
+  function renderEvolucao(porMesRows){
+    const CH = getThemeCharts();
+    const INST = CH.inst;
+    const isYear = isAllYearsMode();
+
+    let labels = [];
+    let values = [];
+
+    if (isYear){
+      const g = groupTotaisByYearFromPorMes(porMesRows);
+      labels = g.labels;
+      values = g.values;
+
+      $("evolTitle").textContent = "Evolução anual";
+      $("evolPill").textContent = "📈 linha + barras (anual)";
+    } else {
+      const byMes = new Map();
+      for (const r of safeArray(porMesRows)){
+        const m = String(r.mes);
+        byMes.set(m, (byMes.get(m)||0) + Number(r.total||0));
+      }
+      labels = [...byMes.keys()].sort();
+      values = labels.map(m => byMes.get(m));
+
+      $("evolTitle").textContent = "Evolução mensal";
+      $("evolPill").textContent = "📈 linha + barras (mensal)";
+    }
+
+    const barT = isYear ? 46 : 34;
+    const maxBar = isYear ? 64 : 46;
+    const maxTicks = isYear ? 8 : 14;
+    const skipPad = isYear ? 18 : 10;
+
+    if (chartMes) chartMes.destroy();
+    const ctx = $("chMes").getContext("2d");
+
+    const gradLine = ctx.createLinearGradient(0, 0, 0, 320);
+    gradLine.addColorStop(0, INST.area0);
+    gradLine.addColorStop(1, INST.area1);
+
+    chartMes = new Chart(ctx, {
+      data: {
+        labels,
+        datasets: [
+          {
+            type: "bar",
+            label: isYear ? "Total/ano (barras)" : "Total/mês (barras)",
+            data: values,
+            backgroundColor: INST.barFill,
+            borderColor: INST.barLine,
+            borderWidth: 1.8,
+            borderRadius: 12,
+            barThickness: barT,
+            maxBarThickness: maxBar,
+            categoryPercentage: 0.82,
+            barPercentage: 0.98,
+            order: 2
+          },
+          {
+            type: "line",
+            label: isYear ? "Total/ano (linha)" : "Total/mês (linha)",
+            data: values,
+            borderColor: INST.line,
+            backgroundColor: gradLine,
+            fill: true,
+            tension: 0.35,
+            pointRadius: 2,
+            pointHoverRadius: 6,
+            pointHitRadius: 30,
+            borderWidth: 2.4,
+            order: 1
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: { mode: "nearest", intersect: false, axis: "x" },
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            enabled: true,
+            padding: 10,
+            callbacks: {
+              title: (items) => `${isYear ? "Ano" : "Mês"}: ${items?.[0]?.label ?? ""}`,
+              label: (item) => ` Total: ${fmt(item.parsed?.y ?? item.parsed)}`
+            }
+          }
+        },
+        scales: {
+          x: {
+            grid: { display:false },
+            ticks: {
+              color: CH.tick,
+              maxRotation: 0,
+              autoSkip: true,
+              autoSkipPadding: skipPad,
+              maxTicksLimit: maxTicks
+            }
+          },
+          y: {
+            beginAtZero:true,
+            grid: { color: CH.grid },
+            ticks: { color: CH.tick, callback:(v)=>fmt(v) }
+          }
+        }
+      }
+    });
+  }
+
+  function renderFluxo(rowsFiltrados, rowsFull){
+    const card = $("cardFluxoMes");
+    const isYear = isAllYearsMode();
+
+    const rws = safeArray(rowsFiltrados);
+    if (!rws.length){
+      $("fluxoHint").textContent = "Sem dados de fluxo (verifique 'por_mes_fluxo').";
+      if (chartFluxoMes) { chartFluxoMes.destroy(); chartFluxoMes = null; }
+      card.style.display = "none";
+      return;
+    }
+    card.style.display = "";
+
+    const backlogMap = new Map(
+      safeArray(rowsFull)
+        .map(r => [String(r.mes ?? "").trim(), Number(r.backlog_pendente ?? 0)])
+        .filter(([mes]) => !!mes)
+    );
+
+    let labels = [];
+    let entradas = [];
+    let entregues = [];
+    let backlog = [];
+    let hint = "";
+
+    if (isYear){
+      const g = groupFluxoByYear(rws);
+      labels = g.labels;
+      entradas = g.entradas;
+      entregues = g.entregues;
+      backlog = g.backlog;
+
+      $("fluxoTitle").textContent = "Entradas x Laudos Entregues x Estoque (ano)";
+      $("fluxoPill").textContent = "📊 2 barras + 1 linha + eixo duplo (anual)";
+
+      if (g.lastLabel){
+        hint = `Último ano: <b>${g.lastLabel}</b> · Entradas: <b>${fmt(g.lastObj.entradas)}</b> · Entregues: <b>${fmt(g.lastObj.entregues)}</b> · Estoque (fim do ano): <b>${fmt(g.lastObj.backlogEnd)}</b>`;
+      }
+    } else {
+      const rowsM = safeArray(rws)
+        .map(r => ({
+          mes: String(r.mes ?? "").trim(),
+          entradas: Number(r.entradas ?? 0),
+          entregues: Number(r.entregues ?? 0),
+          backlogLocal: Number(r.backlog_pendente ?? 0)
+        }))
+        .filter(r => r.mes)
+        .sort((a,b)=>a.mes.localeCompare(b.mes));
+
+      labels = rowsM.map(r=>r.mes);
+      entradas = rowsM.map(r=>r.entradas);
+      entregues = rowsM.map(r=>r.entregues);
+      backlog = rowsM.map(r => backlogMap.has(r.mes) ? backlogMap.get(r.mes) : r.backlogLocal);
+
+      $("fluxoTitle").textContent = "Entradas x Laudos Entregues x Estoque (mês)";
+      $("fluxoPill").textContent = "📊 2 barras + 1 linha + eixo duplo (mensal)";
+
+      const last = rowsM[rowsM.length - 1];
+      const lastBack = backlogMap.has(last.mes) ? backlogMap.get(last.mes) : last.backlogLocal;
+
+      hint = `Último mês: <b>${last.mes}</b> · Entradas: <b>${fmt(last.entradas)}</b> · Entregues: <b>${fmt(last.entregues)}</b> · Estoque: <b>${fmt(lastBack)}</b>`;
+    }
+
+    $("fluxoHint").innerHTML = hint;
+
+    const C = fluxoColors();
+    const barT = isYear ? 32 : 18;
+    const maxBar = isYear ? 44 : 22;
+    const maxTicks = isYear ? 8 : 14;
+    const skipPad = isYear ? 18 : 10;
+
+    if (chartFluxoMes) chartFluxoMes.destroy();
+
+    const ctx = $("chFluxoMes").getContext("2d");
+
+    const gradBacklog = ctx.createLinearGradient(0, 0, 0, 320);
+    gradBacklog.addColorStop(0, C.backFill);
+    gradBacklog.addColorStop(1, C.backFillSoft);
+
+    chartFluxoMes = new Chart(ctx, {
+      data: {
+        labels,
+        datasets: [
+          {
+            type: "bar",
+            label: isYear ? "Entradas (ano)" : "Entradas (mês)",
+            data: entradas,
+            backgroundColor: C.inFill,
+            borderColor: C.inLine,
+            borderWidth: 1.8,
+            borderRadius: 12,
+            barThickness: barT,
+            maxBarThickness: maxBar,
+            yAxisID: "y",
+            order: 2
+          },
+          {
+            type: "bar",
+            label: isYear ? "Laudos entregues (ano)" : "Laudos entregues (mês)",
+            data: entregues,
+            backgroundColor: C.outFill,
+            borderColor: C.outLine,
+            borderWidth: 1.8,
+            borderRadius: 12,
+            barThickness: barT,
+            maxBarThickness: maxBar,
+            yAxisID: "y",
+            order: 2
+          },
+          {
+            type: "line",
+            label: isYear ? "Estoque (fim do ano)" : "Estoque (acumulado)",
+            data: backlog,
+            borderColor: C.backLine,
+            backgroundColor: gradBacklog,
+            borderWidth: 2.6,
+            tension: 0.35,
+            fill: true,
+            pointRadius: 2.5,
+            pointHoverRadius: 6,
+            pointHitRadius: 28,
+            pointBackgroundColor: C.backLine,
+            pointBorderColor: C.backLine,
+            pointBorderWidth: 1,
+            yAxisID: "y1",
+            order: 1
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: { mode: "index", intersect: false },
+        plugins: {
+          legend: {
+            position: "bottom",
+            labels: { color: C.tick, boxWidth: 14, boxHeight: 10, padding: 16 }
+          },
+          tooltip: {
+            enabled: true,
+            padding: 12,
+            callbacks: {
+              title: (items) => `${isYear ? "Ano" : "Mês"}: ${items?.[0]?.label ?? ""}`,
+              label: (ctx) => ` ${ctx.dataset.label}: ${fmt(ctx.parsed?.y ?? ctx.parsed)}`
+            }
+          }
+        },
+        scales: {
+          x: {
+            grid: { display: false },
+            ticks: {
+              color: C.tick,
+              maxRotation: 0,
+              autoSkip: true,
+              autoSkipPadding: skipPad,
+              maxTicksLimit: maxTicks
+            }
+          },
+          y: {
+            beginAtZero: true,
+            position: "left",
+            grid: { color: C.grid },
+            ticks: { color: C.tick, callback: (v) => fmt(v) }
+          },
+          y1: {
+            beginAtZero: true,
+            position: "right",
+            grid: { drawOnChartArea: false },
+            ticks: { color: C.tick, callback: (v) => fmt(v) }
+          }
+        }
+      }
+    });
+  }
+
+  function renderGaugeFromRows(reqRows){
+    const CH = getThemeCharts();
+    const good = cssVar("--good", "rgba(0,200,83,1)");
+    const bad  = cssVar("--bad",  "rgba(255,23,68,1)");
+
+    const reqMap = new Map(reqRows.map(x => [String(x.com_requisicao || ""), Number(x.total || 0)]));
+    const vCom = reqMap.get("COM REQUISIÇÃO") ?? reqMap.get("COM") ?? 0;
+    const vSem = (reqMap.get("SEM REQUISIÇÃO") ?? reqMap.get("SEM") ?? 0) + (reqMap.get("(NULL)") ?? 0);
+
+    if (chartReq) chartReq.destroy();
+    chartReq = new Chart($("chReq"), {
+      type:"doughnut",
+      data:{
+        labels:["COM REQUISIÇÃO","SEM REQUISIÇÃO"],
+        datasets:[{
+          data:[vCom, vSem],
+          backgroundColor:[withAlphaHslOrHex(good,0.95), withAlphaHslOrHex(bad,0.95)],
+          borderColor: CH.border,
+          borderWidth:2,
+          hoverOffset:8
+        }]
+      },
+      plugins:[CenterTextPlugin],
+      options:{
+        responsive:true,
+        maintainAspectRatio:false,
+        cutout:"72%",
+        rotation:-90,
+        circumference:180,
+        plugins:{
+          legend:{ display:false },
+          tooltip:{ enabled:true },
+          centerText:{ value:vCom }
+        }
+      }
+    });
+  }
+
+  function renderDiretoriaFromRows(rows){
+    const CH = getThemeCharts();
+
+    const m = new Map();
+    for (const r of rows){
+      const k = String(r.diretoria ?? "(NULL)").trim();
+      const v = Number(r.total || 0);
+      m.set(k, (m.get(k) || 0) + v);
+    }
+
+    const grouped = [...m.entries()]
+      .map(([diretoria,total]) => ({ diretoria, total }))
+      .sort((a,b)=>b.total-a.total);
+
+    const labels = grouped.map(r => r.diretoria);
+    const values = grouped.map(r => Number(r.total || 0));
+
+    const palette = [
+      { fill:"rgba(54, 99, 181, 0.88)",  line:"rgba(54, 99, 181, 1)" },
+      { fill:"rgba(42, 157, 143, 0.88)", line:"rgba(42, 157, 143, 1)" },
+      { fill:"rgba(233, 196, 106, 0.88)",line:"rgba(233, 196, 106, 1)" },
+      { fill:"rgba(231, 111, 81, 0.88)", line:"rgba(231, 111, 81, 1)" },
+      { fill:"rgba(118, 96, 138, 0.88)", line:"rgba(118, 96, 138, 1)" }
+    ];
+
+    const fills = labels.map((_, i) => palette[i % palette.length].fill);
+    const lines = labels.map((_, i) => palette[i % palette.length].line);
+
+    if (chartDiretoria) chartDiretoria.destroy();
+
+    chartDiretoria = new Chart($("chDiretoria"), {
+      type: "pie",
+      data: {
+        labels,
+        datasets: [{
+          data: values,
+          backgroundColor: fills,
+          borderColor: lines,
+          borderWidth: 2,
+          hoverOffset: 12
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { position: "bottom", labels: { color: CH.tick, boxWidth:14, boxHeight:10, padding:16 } },
+          tooltip: {
+            enabled: true,
+            padding: 12,
+            callbacks: {
+              label: (ctx) => {
+                const total = ctx.dataset.data.reduce((a,b)=>a+Number(b||0), 0);
+                const v = Number(ctx.parsed || 0);
+                const pct = total ? Math.round((v/total)*100) : 0;
+                return ` ${ctx.label}: ${fmt(v)} (${pct}%)`;
+              }
+            }
+          }
+        }
+      }
+    });
+  }
+
+  function renderLaudoFromRows(rows){
+    const CH = getThemeCharts();
+
+    const order = ["ENTREGUE","NÃO ENTREGUE"];
+    const m = new Map(rows.map(r => [String(r.laudo_status ?? r.status ?? "(NULL)"), Number(r.total||0)]));
+    const labels = order.filter(k => m.has(k)).concat([...m.keys()].filter(k => !order.includes(k)));
+    const values = labels.map(l => m.get(l) ?? 0);
+
+    const fills = labels.map(l => (LAUDO_COLORS[l] || stableColor(l)).fill);
+    const lines = labels.map(l => (LAUDO_COLORS[l] || stableColor(l)).line);
+
+    if (chartLaudo) chartLaudo.destroy();
+    chartLaudo = new Chart($("chLaudo"), {
+      type:"doughnut",
+      data:{ labels, datasets:[{ data:values, backgroundColor:fills, borderColor:lines, borderWidth:2, hoverOffset:10 }] },
+      options:{
+        responsive:true, maintainAspectRatio:false, cutout:"72%",
+        plugins:{
+          legend:{ position:"bottom", labels:{ color: CH.tick, boxWidth:14, boxHeight:10, padding:16 } },
+          tooltip:{ enabled:true, padding:10, callbacks:{ label:(ctx)=>` ${ctx.label}: ${fmt(ctx.parsed)}` } }
+        }
+      }
+    });
+  }
+
+  function groupTopSetoresFromPayload(data){
+    const fromLimited = safeArray(data.por_setor_top10)
+      .map(r => ({ setor_sigla: String(r.setor_sigla ?? "(NULL)"), total: Number(r.total||0) }))
+      .sort((a,b)=>b.total-a.total);
+
+    if (fromLimited.length) return fromLimited;
+
+    const rows = safeArray(data.kpis_por_setor);
+    const m = new Map();
+    for (const r of rows){
+      const k = String(r.setor_sigla ?? "(NULL)").trim() || "(NULL)";
+      const v = Number(r.total || 0);
+      m.set(k, (m.get(k)||0) + v);
+    }
+    return [...m.entries()].map(([setor_sigla,total])=>({setor_sigla,total}))
+      .sort((a,b)=>b.total-a.total);
+  }
+
+  function renderTopSetoresChart(rows){
+    const CH = getThemeCharts();
+
+    const top = rows.slice(0, topN);
+    const labels = top.map(x => x.setor_sigla);
+    const values = top.map(x => Number(x.total || 0));
+
+    const base = labels.map(s => colorForSetor(s));
+    const fill = base.map(c => withAlphaHslOrHex(c, 0.80));
+    const line = base.map(c => withAlphaHslOrHex(c, 1));
+
+    if (chartSetor) chartSetor.destroy();
+    chartSetor = new Chart($("chSetor"), {
+      type: "bar",
+      data: {
+        labels,
+        datasets: [{
+          label:"Total",
+          data:values,
+          backgroundColor:fill,
+          borderColor:line,
+          borderWidth:1.8,
+          borderRadius:12,
+          barThickness:26,
+          maxBarThickness:32
+        }]
+      },
+      options: {
+        responsive:true,
+        maintainAspectRatio:false,
+        plugins:{ legend:{ display:false }, tooltip:{ enabled:true } },
+        scales:{
+          x:{ ticks:{ color: CH.tick }, grid:{ display:false } },
+          y:{ beginAtZero:true, ticks:{ color: CH.tick, callback:(v)=>fmt(v) }, grid:{ color: CH.grid } }
+        }
+      }
+    });
+  }
+
+  function renderSetorRequisitanteChart(rows){
+    const CH = getThemeCharts();
+
+    const rws = safeArray(rows)
+      .map(r => ({
+        setor_requisitante_sigla: String(r.setor_requisitante_sigla ?? "(NULL)").trim() || "(NULL)",
+        total: Number(r.total || 0)
+      }))
+      .sort((a,b)=>b.total-a.total);
+
+    $("setorReqBadge").textContent =
+      rws[0]?.setor_requisitante_sigla ? `${rws[0].setor_requisitante_sigla} (${fmt(rws[0].total)})` : "—";
+
+    const top = rws.slice(0, 15);
+    const labels = top.map(x => x.setor_requisitante_sigla);
+    const values = top.map(x => x.total);
+    const base = labels.map(l => hashColor(l));
+    const fill = base.map(c => withAlphaHslOrHex(c, 0.80));
+    const line = base.map(c => withAlphaHslOrHex(c, 1));
+
+    if (chartSetorReq) chartSetorReq.destroy();
+    chartSetorReq = new Chart($("chSetorReq"), {
+      type: "bar",
+      data: {
+        labels,
+        datasets: [{
+          label:"Total",
+          data: values,
+          backgroundColor: fill,
+          borderColor: line,
+          borderWidth: 1.6,
+          borderRadius: 12,
+          barThickness: 24,
+          maxBarThickness: 30
+        }]
+      },
+      options: {
+        responsive:true,
+        maintainAspectRatio:false,
+        plugins:{ legend:{ display:false }, tooltip:{ enabled:true } },
+        scales:{
+          x:{ ticks:{ color: CH.tick }, grid:{ display:false } },
+          y:{ beginAtZero:true, ticks:{ color: CH.tick, callback:(v)=>fmt(v) }, grid:{ color: CH.grid } }
+        }
+      }
+    });
+  }
+
+  function setTipoExameCardVisible(isVisible){
+    const card = $("cardTipoExameSetor");
+    card.style.display = isVisible ? "" : "none";
+  }
+
+  function renderTipoExamePorSetor(rows){
+    const CH = getThemeCharts();
+
+    const setorSel = currentSetor();
+    if (!setorSel){
+      setTipoExameCardVisible(false);
+      if (chartTipoExame) { chartTipoExame.destroy(); chartTipoExame = null; }
+      return;
+    }
+
+    setTipoExameCardVisible(true);
+
+    const rws = safeArray(rows).map(r => ({
+      setor_sigla: String(r.setor_sigla ?? "(NULL)").trim() || "(NULL)",
+      tipo_exame: String(r.tipo_exame ?? "(NULL)").trim() || "(NULL)",
+      total: Number(r.total || 0)
+    }))
+    .filter(r => norm(r.setor_sigla) === norm(setorSel))
+    .sort((a,b)=>b.total-a.total);
+
+    const totalAll = rws.reduce((a,b)=>a + (b.total||0), 0);
+    $("tipoExameHint").innerHTML = `Setor: <b>${setorSel}</b> · Total (todos): <b>${fmt(totalAll)}</b>`;
+
+    if (!rws.length){
+      if (chartTipoExame) { chartTipoExame.destroy(); chartTipoExame = null; }
+      return;
+    }
+
+    const labels = rws.map(x => x.tipo_exame);
+    const values = rws.map(x => x.total);
+
+    const fills = labels.map(l => withAlphaHslOrHex(hashColor(l), 0.62));
+    const lines = labels.map(l => withAlphaHslOrHex(hashColor(l), 1));
+
+    if (chartTipoExame) chartTipoExame.destroy();
+
+    chartTipoExame = new Chart($("chTipoExame"), {
+      type: "bar",
+      data: {
+        labels,
+        datasets: [{
+          label: `Total por tipo de exame (${setorSel})`,
+          data: values,
+          backgroundColor: fills,
+          borderColor: lines,
+          borderWidth: 1.5,
+          borderRadius: 10,
+          barThickness: 18,
+          maxBarThickness: 22
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        indexAxis: "y",
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            enabled: true,
+            callbacks: {
+              title: (items) => items?.[0]?.label ? `Tipo: ${items[0].label}` : "Tipo",
+              label: (ctx) => ` Total: ${fmt(ctx.parsed?.x ?? ctx.parsed)}`
+            }
+          }
+        },
+        scales: {
+          x: { beginAtZero: true, ticks: { color: CH.tick, callback:(v)=>fmt(v) }, grid:{ color: CH.grid } },
+          y: { ticks: { color: CH.tick }, grid:{ display:false } }
+        }
+      }
+    });
+  }
+
+  function buildDiretoriaOptions(data){
+    const rows = safeArray(data.por_diretoria);
+    const dirs = uniq(rows.map(x => String(x.diretoria ?? "").trim()).filter(Boolean))
+      .sort((a,b)=>a.localeCompare(b,"pt-BR",{sensitivity:"base"}));
+
+    const sel = $("dirSelect");
+    const cur = sel.value || "__ALL__";
+
+    sel.innerHTML =
+      `<option value="__ALL__">Todas as diretorias</option>` +
+      dirs.map(d => `<option value="${d}">${d}</option>`).join("");
+
+    sel.value = dirs.includes(cur) ? cur : "__ALL__";
+  }
+
+  function buildSetorOptions(data){
+    const dir = currentDiretoria();
+    const sel = $("setorSelect");
+    const prev = String(sel.value || "__ALL__").trim();
+
+    if (!dir){
+      sel.disabled = true;
+      sel.innerHTML = `<option value="__ALL__">Selecione o setor</option>`;
+      sel.value = "__ALL__";
+      return;
+    }
+
+    const rows = safeArray(data.kpis_por_setor).filter(r => norm(r.diretoria) === norm(dir));
+
+    const setores = uniq(rows.map(r => String(r.setor_sigla ?? "").trim()).filter(Boolean))
+      .sort((a,b)=>a.localeCompare(b, "pt-BR", { sensitivity:"base" }));
+
+    sel.disabled = false;
+    sel.innerHTML =
+      `<option value="__ALL__">Todos os setores</option>` +
+      setores.map(s => `<option value="${s}">${s}</option>`).join("");
+
+    if (prev !== "__ALL__" && setores.includes(prev)) sel.value = prev;
+    else sel.value = "__ALL__";
+  }
+
+  function buildAnoOptionsFromMes(data){
+    const sel = $("anoSelect");
+    const prev = String(sel.value || "__ALL__").trim();
+
+    const mesRows = safeArray(data.por_mes);
+    const anos = uniq(mesRows
+      .map(r => Number(String(r.mes || "").slice(0,4)))
+      .filter(y => y >= 1900)
+    ).sort((a,b)=>b-a);
+
+    sel.disabled = false;
+    sel.innerHTML =
+      `<option value="__ALL__">Todos os anos</option>` +
+      anos.map(y => `<option value="${y}">${y}</option>`).join("");
+
+    const prevNum = Number(prev);
+    if (prev !== "__ALL__" && Number.isFinite(prevNum) && anos.includes(prevNum)) sel.value = String(prevNum);
+    else sel.value = "__ALL__";
+  }
+
+  function renderFromServer(data, dataNoAno = null){
+    const dir = currentDiretoria();
+    const setor = currentSetor();
+    const ano = currentAno();
+
+    $("dirBadge").textContent = dir || "Todas";
+    $("setorBadge").textContent = setor || "Todos";
+    $("anoBadge").textContent = ano ? String(ano) : "Todos";
+
+    const k = data.kpis || {};
+    $("k_total").textContent = fmt(k.total || 0);
+    $("k_com").textContent  = fmt(k.com_requisicao || 0);
+    $("k_sem").textContent  = fmt(k.sem_requisicao || 0);
+    $("k_fin").textContent  = fmt(k.concluidos || 0);
+    $("k_nfin").textContent = fmt(k.nao_concluidos || 0);
+    $("k_ent_total").textContent  = fmt(k.laudo_entregue_total || 0);
+    $("k_ent_periodo").textContent = fmt(k.laudo_entregue_do_periodo || 0);
+    $("k_pausa").textContent = fmt(k.em_pausa || 0);
+    $("k_proc_sim").textContent = fmt(k.tem_procedimento_sim || 0);
+    $("k_proc_nao").textContent = fmt(k.tem_procedimento_nao || 0);
+
+    renderEvolucao(safeArray(data.por_mes));
+
+    renderDiretoriaFromRows(safeArray(data.por_diretoria));
+    renderGaugeFromRows(safeArray(data.por_com_requisicao));
+    renderLaudoFromRows(safeArray(data.por_laudo_entregue).map(r => ({ laudo_status: r.status, total: r.total })));
+
+    const topSetores = groupTopSetoresFromPayload(data);
+    renderTopSetoresChart(topSetores);
+
+    renderSetorRequisitanteChart(safeArray(data.por_setor_requisitante));
+    renderTipoExamePorSetor(safeArray(data.por_tipo_exame_setor));
+
+    const fluxoFiltrado = safeArray(data.por_mes_fluxo);
+    const fluxoFull = safeArray(dataNoAno?.por_mes_fluxo);
+    renderFluxo(fluxoFiltrado, fluxoFull);
+
+    syncUiQueryToUrl();
+  }
+
+  async function loadDashboard() {
+    const endpoint = buildDataUrl();
+    if (!endpoint) return showError("Informe a URL base do webhook UI (sem /data).");
+
+    clearError();
+    setStatus("carregando…", "warn");
+    const t0 = performance.now();
+
+    try {
+      const res = await fetch(endpoint, { method: "GET", cache: "no-store" });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+      const raw = await res.text();
+      const trimmed = raw.trim();
+
+      if (trimmed.startsWith("<!doctype") || trimmed.startsWith("<html") || trimmed.startsWith("<")) {
+        throw new Error(
+          "O /data retornou HTML, não JSON.\n" +
+          "Começo da resposta:\n" + trimmed.slice(0, 260)
+        );
+      }
+
+      let data0 = parsePossiblyWrappedJsonText(trimmed);
+
+      if (!data0 || typeof data0 !== "object") {
+        throw new Error("JSON válido, mas não é um objeto esperado (confira a saída do workflow).");
+      }
+
+      $("latency").textContent = `${Math.round(performance.now() - t0)} ms`;
+      lastData = data0;
+
+      $("apiBadge").textContent = endpoint;
+      $("sourceHint").textContent = endpoint;
+      $("updatedAt").textContent = data0.updated_at || new Date().toLocaleString("pt-BR");
+
+      lastDataNoAno = null;
+      const anoSelecionado = !!currentAno();
+      if (anoSelecionado) {
+        const endpointNoAno = buildDataUrl({ omitAno: true });
+        if (endpointNoAno) {
+          try {
+            const res2 = await fetch(endpointNoAno, { method: "GET", cache: "no-store" });
+            if (res2.ok) {
+              const raw2 = (await res2.text()).trim();
+              if (!(raw2.startsWith("<!doctype") || raw2.startsWith("<html") || raw2.startsWith("<"))) {
+                const dataNoAno = parsePossiblyWrappedJsonText(raw2);
+                if (dataNoAno && typeof dataNoAno === "object") {
+                  lastDataNoAno = dataNoAno;
+                }
+              }
+            }
+          } catch {
+            lastDataNoAno = null;
+          }
+        }
+      }
+
+      buildDiretoriaOptions(data0);
+
+      if (pendingApplyFilters?.diretoria) {
+        const d = pendingApplyFilters.diretoria;
+        const has = [...$("dirSelect").options].some(o => o.value === d);
+        if (has) $("dirSelect").value = d;
+      }
+
+      buildSetorOptions(data0);
+      buildAnoOptionsFromMes(data0);
+
+      if (pendingApplyFilters?.setor) {
+        const s = pendingApplyFilters.setor;
+        const has = [...$("setorSelect").options].some(o => o.value === s);
+        if (has) $("setorSelect").value = s;
+      }
+      if (pendingApplyFilters?.ano) {
+        const a = String(pendingApplyFilters.ano);
+        const has = [...$("anoSelect").options].some(o => o.value === a);
+        if (has) $("anoSelect").value = a;
+      }
+
+      pendingApplyFilters = null;
+
+      renderFromServer(data0, lastDataNoAno);
+      setStatus("ok", "ok");
+    } catch (e) {
+      $("latency").textContent = "—";
+      showError(`Falha ao carregar: ${e.message}`);
+    }
+  }
+
+  function setAutoRefresh() {
+    const sec = Number($("refresh").value);
+    if (timer) clearInterval(timer);
+    timer = null;
+    if (sec > 0) timer = setInterval(loadDashboard, sec * 1000);
+  }
+
+  $("dirSelect").addEventListener("change", () => {
+    $("setorSelect").value = "__ALL__";
+    const hasDir = $("dirSelect").value !== "__ALL__";
+    $("setorSelect").disabled = !hasDir;
+
+    scheduleLoad();
+    renderTipoExamePorSetor(safeArray(lastData?.por_tipo_exame_setor));
+  });
+
+  $("setorSelect").addEventListener("change", () => {
+    scheduleLoad();
+    renderTipoExamePorSetor(safeArray(lastData?.por_tipo_exame_setor));
+  });
+
+  $("anoSelect").addEventListener("change", () => scheduleLoad());
+
+  $("btnReset").addEventListener("click", () => {
+    $("dirSelect").value = "__ALL__";
+
+    $("setorSelect").innerHTML = `<option value="__ALL__">Selecione um setor</option>`;
+    $("setorSelect").value = "__ALL__";
+    $("setorSelect").disabled = true;
+
+    $("anoSelect").innerHTML = `<option value="__ALL__">Todos os anos</option>`;
+    $("anoSelect").value = "__ALL__";
+    $("anoSelect").disabled = false;
+
+    $("dirBadge").textContent = "Todas";
+    $("setorBadge").textContent = "Todos";
+    $("anoBadge").textContent = "Todos";
+    $("setorReqBadge").textContent = "—";
+
+    lastDataNoAno = null;
+
+    if (chartTipoExame) { chartTipoExame.destroy(); chartTipoExame = null; }
+    setTipoExameCardVisible(false);
+
+    if (chartFluxoMes) { chartFluxoMes.destroy(); chartFluxoMes = null; }
+    $("cardFluxoMes").style.display = "none";
+
+    window.history.replaceState({}, "", window.location.pathname);
+    loadDashboard();
+  });
+
+  (function initApiUrl(){
+    const suggested = guessBaseFromPageHost();
+    const p = new URLSearchParams(window.location.search);
+    const apiFromQs = (p.get("api") || "").trim();
+
+    $("apiUrl").value = apiFromQs || suggested;
+    $("apiBadge").textContent = apiFromQs || suggested;
+  })();
+
+  $("btnLoad").addEventListener("click", loadDashboard);
+  $("refresh").addEventListener("change", setAutoRefresh);
+
+  $("buildInfo").textContent = `Desenvolvimento: Paulo Lima & Roniselton Barreto - v11 - ${new Date().getFullYear()}`;
+
+  const THEME_KEY = "galileu_theme";
+  const THEMES = ["dark","light","ssp"];
+
+  function applyTheme(theme){
+    const t = THEMES.includes(theme) ? theme : "dark";
+    document.documentElement.dataset.theme = t;
+    document.body.dataset.theme = t;
+
+    const icon  = document.getElementById("themeIcon");
+    const label = document.getElementById("themeLabel");
+
+    if (icon && label){
+      if (t === "light"){ icon.textContent="🌞"; label.textContent="Tema claro"; }
+      else if (t === "dark"){ icon.textContent="🌙"; label.textContent="Tema escuro"; }
+      else { icon.textContent="🛡️"; label.textContent="Tema SSP"; }
+    }
+
+    try { localStorage.setItem(THEME_KEY, t); } catch {}
+    if (window.__galileuThemeRefreshCharts) window.__galileuThemeRefreshCharts();
+  }
+
+  function toggleTheme(){
+    const cur = document.documentElement.dataset.theme || "dark";
+    const idx = THEMES.indexOf(cur);
+    const next = THEMES[(idx >= 0 ? idx + 1 : 1) % THEMES.length];
+    applyTheme(next);
+  }
+
+  window.__galileuThemeRefreshCharts = function(){
+    if (lastData) renderFromServer(lastData, lastDataNoAno);
+  };
+
+  document.addEventListener("DOMContentLoaded", () => {
+    const saved = (() => { try { return (localStorage.getItem(THEME_KEY) || "").trim(); } catch { return ""; } })();
+    applyTheme(saved || (document.documentElement.dataset.theme || "dark"));
+
+    const btn = document.getElementById("themeToggle");
+    if (btn){
+      btn.addEventListener("click", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        toggleTheme();
+      });
+    }
+  });
+
+  setAutoRefresh();
+  loadDashboard();
+</script>
+</body>
+</html>
